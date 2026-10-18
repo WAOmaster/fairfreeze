@@ -202,6 +202,7 @@ def case(cid: str):
            "rules": engine.RULES[c["country"]], "requisition": c["requisition"], "audit": st["audit"], "request": st["request"], "running": st["running"],
            "live_steps": st["live_steps"], "agent_error": st["agent_error"],
            "evidence": st["evidence"], "drafts": st["drafts"], "decision": st["decision"]}
+    out["money_map"] = engine.money_map(c)
     if c["kind"] == "inbound":
         out["trace"] = engine.trace(c)
         out["signals"] = engine.signals(c)
@@ -279,6 +280,10 @@ def case_tools(cid, c, st):
         """The customer's documents as read, the cross-checks against the bank record, reuse hits, strength and plan."""
         return st["evidence"] or {"note": "No evidence yet."}
 
+    def money_map_by_location() -> dict:
+        """Where the money came from and went (cities, countries) and where the account is logged in from."""
+        return engine.money_map(c)
+
     def search_prior_cases(text: str) -> list:
         """Search other banks' past cases for the same story or script. Pass the chat text or a phrase."""
         return engine.reuse([], text, cid)
@@ -288,7 +293,7 @@ def case_tools(cid, c, st):
         e = engine.essentials(c)
         return {k: v for k, v in e.items() if k != "rows"}
 
-    common = [get_case_profile, get_freeze_request_check, get_country_rules, get_evidence_review]
+    common = [get_case_profile, get_freeze_request_check, get_country_rules, get_evidence_review, money_map_by_location]
     tools = common + ([trace_money, behaviour_signals, search_prior_cases] if c["kind"] == "inbound" else [essentials_allowance])
 
     def live(f):
@@ -307,7 +312,8 @@ async def run_agent(cid, c, st):
         tools=tools, temperature=0, http_options=types.HttpOptions(timeout=120_000),
         automatic_function_calling=types.AutomaticFunctionCallingConfig(maximum_remote_calls=12),
         system_instruction="You are the FairFreeze Case Agent at a bank. Investigate this account freeze with your tools "
-        "before concluding: verify the request, trace the money, weigh the evidence, look for scripts reused across banks, "
+        "before concluding: verify the request, trace the money, check where the money came from and went and where the account "
+        "is used from, weigh the evidence, look for scripts reused across banks, "
         "and check the country rules. Numbers come only from tools. Then write a short assessment for the officer: "
         "what happened, the recommended action and why, anything the automatic checks may have missed, and the rule ids "
         "that apply. You recommend; a human officer decides. Plain English, no em-dashes.")

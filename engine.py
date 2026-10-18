@@ -57,6 +57,43 @@ def trace(case, disputed=None):
     }
 
 
+def country(place):
+    return (place or "").split(", ")[-1]
+
+
+def money_map(case):
+    """Who sent money in and where it went, by place, plus where the account is used from."""
+    home = case["customer"].get("home", "")
+    flagged = case.get("flagged")
+    side = lambda t: {"party": t["party"], "place": t.get("place", home), "amount": abs(t["amount"]), "ts": t["ts"],  # noqa: E731
+                      "flagged": bool(flagged) and t.get("id") == flagged, "abroad": country(t.get("place", home)) != country(home)}
+    txns = [t for t in case["txns"] if case["kind"] == "inbound" or t.get("cat") in ("transfer", "income")]
+    out = [side(t) for t in txns if t["amount"] < 0] + [{**side(t), "pending": True} for t in case.get("pending", [])]
+    return {"home": home, "logins": case.get("logins", []), "in": [side(t) for t in txns if t["amount"] > 0], "out": out}
+
+
+def geo_signals(case, rows, t0):
+    home = case["customer"].get("home", "")
+    out = []
+    abroad = [l for l in case.get("logins", []) if l["country"] != country(home)]
+    if abroad:
+        out.append({"name": "Account used from abroad", "points": "concern",
+                    "value": f"{abroad[0]['place']}, {abroad[0]['country']} ({abroad[0]['share']} of logins); holder lives in {home}"})
+    elif case.get("logins"):
+        out.append({"name": "Account used from the holder's home city", "points": "innocent", "value": f"{home} ({case['logins'][0]['share']} of logins)"})
+    day = [r for r in rows if abs(ts(r["ts"]) - t0) <= timedelta(hours=24)]
+    cities = sorted({r.get("place", home) for r in day if r["amount"] > 0})
+    age = (t0 - datetime.fromisoformat(case["customer"]["opened"])).days
+    if len(cities) >= 3:
+        out.append({"name": "Money arrived from different cities within 24 hours", "value": ", ".join(cities),
+                    "points": "concern" if age < 365 else "neutral"})
+    sent = [r for r in day if r["amount"] < 0 and ts(r["ts"]) >= t0 and country(r.get("place", home)) != country(home)]
+    if sent:
+        out.append({"name": "Money sent abroad soon after it arrived", "points": "concern",
+                    "value": "; ".join(f"{r['place']} {-r['amount']:,}" for r in sent)})
+    return out
+
+
 def signals(case):
     """Behaviour facts from the bank's own record. Each says which way it points; none is a verdict."""
     rows = with_balances(case)
@@ -85,7 +122,7 @@ def signals(case):
     regular_in = [r for r in rows if r["amount"] > 0 and r["party"] in regular]
     if regular_in:
         out.append({"name": "Regular income on the account", "value": regular_in[0]["party"], "points": "innocent"})
-    return out
+    return out + geo_signals(case, rows, t0)
 
 
 def _norm_name(s):
@@ -255,6 +292,10 @@ def self_check():
     assert (n["hold"], n["release"]) == (1250, 5480), n
     e = essentials(CASES["SG-2026-0077"])
     assert e["allowance"] == 1100 and e["already_sent"] == 35000, e
+    sig = {g["name"]: g["points"] for g in signals(CASES["IN-2026-0419"])}
+    assert sig["Account used from abroad"] == "concern" and sig["Money sent abroad soon after it arrived"] == "concern", sig
+    assert all(g["points"] != "concern" for g in signals(CASES["IN-2026-0411"])), signals(CASES["IN-2026-0411"])
+    assert money_map(CASES["SG-2026-0077"])["out"][-1]["pending"]
     assert name_match("AMIT K SHARMA", "Amit Sharma") and not name_match("AMIT K SHARMA", "Rahul Verma")
     assert restitution(1100, {"a": 24500, "b": 12000}) == {"a": 739, "b": 361}
     assert strength([{"ok": True}] * 4, [{"points": "innocent"}], []) == "strong"

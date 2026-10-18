@@ -16,6 +16,10 @@ button.ghost{background:var(--soft);color:var(--brand)}button:disabled{opacity:.
 button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid #8db4ff;outline-offset:2px}
 header{background:var(--ink);color:#fff;padding:12px 22px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
 .logo{font-weight:700;font-size:20px;letter-spacing:.2px}.logo span{color:#7fb0ff}.tag{color:#c7d2e6;font-size:13px}
+.ctx{background:#14214a;color:#c7d2e6;font-size:13px;padding:7px 22px;display:flex;gap:10px;flex-wrap:wrap}.ctx b{color:#fff}.ctx .sep{opacity:.4}
+.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:10px}.kpis div{background:var(--bg);border-radius:8px;padding:6px 8px}.kpis b{display:block;font-size:18px}.kpis span{font-size:11px;color:var(--muted)}
+.badges{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}.badges span{font-size:12px;border-radius:6px;padding:2px 8px;background:var(--soft);color:#173a8a}.badges .b-bad{background:var(--bad-bg);color:var(--bad)}.badges .b-ok{background:var(--ok-bg);color:var(--ok)}
+.mm{margin-top:14px}.mm h4{margin:0 0 4px}
 .guide{background:linear-gradient(135deg,#eef3ff,#e6f6ef);border-color:#cfe0ff}.guide ol{margin:6px 0 0;padding-left:20px}.guide li{margin:4px 0}.guide .row button{padding:4px 10px;font-size:13px}
 nav{margin-left:auto;display:flex;gap:6px}nav button{background:transparent;color:#c7d2e6}nav button.on{background:#24365e;color:#fff}
 main{display:grid;grid-template-columns:300px 1fr;gap:18px;padding:18px 22px;max-width:1400px;margin:0 auto}
@@ -57,6 +61,7 @@ input[type=text]{font:inherit;padding:8px 10px;border:1px solid var(--line);bord
   <img src="/logo.svg" alt="" width="38" height="38"><div><div class="logo">Fair<span>Freeze</span></div><div class="tag">Hold the right money. Free the innocent. Return it to victims.</div></div>
   <nav id="nav"><button data-v="console" class="on">Officer console</button><button data-v="regulator">Regulator view</button><button data-v="reset" title="Put all demo cases back to New">Reset demo</button></nav>
 </header>
+<div class="ctx" id="ctx"><span><b>Freeze desk</b> · Financial Crime Compliance</span><span class="sep">|</span><span>Duty officer: <b>Ayesha Khan</b>, FinCrime Compliance Officer</span><span class="sep">|</span><span>Demo workspace: 3 partner banks in India, Thailand and Singapore</span></div>
 <div id="app"></div>
 <script>
 const $ = (s, el = document) => el.querySelector(s);
@@ -142,7 +147,9 @@ async function consolePage() {
     <li><b>Vikram</b>: already processed. See why his perfect-looking documents are a red flag, and why no letter goes to him.</li>
     <li><b>Nok</b> (Thai) and <b>Mrs Tan</b> (Singapore, Mandarin): other countries, same engine.</li>
     <li>Open <b>Regulator view</b> at the top, and the <b>customer link</b> in step 3.</li></ol></div>`;
-  $("#app").innerHTML = `<main><aside class="inbox">${guide}<div class="card"><h3>Freeze cases</h3><div id="list"></div>
+  const due = cases.filter(c => (new Date(c.due) - new Date()) < 24 * 3600e3).length, open = cases.filter(c => c.status !== "Approved").length;
+  $("#app").innerHTML = `<main><aside class="inbox">${guide}<div class="card"><h3>Freeze cases</h3>
+    <div class="kpis"><div><b>${open}</b><span>open cases</span></div><div><b>${due}</b><span>due within 24h</span></div><div><b>3</b><span>countries</span></div></div><div id="list"></div>
     <p class="small muted">Synthetic demo data. All people, banks and accounts are fictional.</p></div></aside><section id="case"></section></main>`;
   if ($("#hideGuide")) $("#hideGuide").onclick = () => { $("#guide").remove(); try { localStorage.setItem("ff-guide", "hidden"); } catch (e) {} };
   drawList(); openCase(current || cases[0].id);
@@ -166,6 +173,29 @@ function chart(rows, flaggedId, hold, cur) {
     ${fi >= 0 ? `<text x="${x(fi)}" y="${y(rows[fi].balance) - 12}" text-anchor="middle" font-size="11" fill="#b42318">disputed credit</text>` : ""}
     <text x="${P}" y="${H - 6}" font-size="11" fill="#5b6575">${esc(rows[0].ts.slice(0, 10))}</text><text x="${W - P}" y="${H - 6}" text-anchor="end" font-size="11" fill="#5b6575">${esc(rows.at(-1).ts.slice(0, 10))}</text></svg>`;
 }
+function moneyMap(m, cur, name) {
+  const W = 780, L = 225, R = 780 - 225, rowH = 30, n = Math.max(m.in.length, m.out.length, 1), H = 70 + n * rowH, cx = W / 2;
+  const node = (x, y, t, anchor, cls) => `<text x="${x}" y="${y}" text-anchor="${anchor}" font-size="11.5" fill="${cls}">${esc(t)}</text>`;
+  const col = e => e.flagged ? "#b42318" : e.pending ? "#5b6575" : e.abroad ? "#c26a00" : "#0b5fff";
+  let g = "";
+  const y0 = 50;
+  m.in.forEach((e, i) => { const y = y0 + i * rowH;
+    g += `<path d="M${L + 6} ${y} C ${cx - 90} ${y}, ${cx - 90} ${H / 2 + 10}, ${cx - 70} ${H / 2 + 10}" fill="none" stroke="${col(e)}" stroke-width="${e.flagged ? 3 : 1.6}" ${e.abroad ? 'stroke-dasharray="5 4"' : ""}/>`;
+    g += node(L, y - 4, `${e.party}`, "end", "#14213d") + node(L, y + 9, `${e.place} · ${money(e.amount, cur)}`, "end", col(e)); });
+  m.out.forEach((e, i) => { const y = y0 + i * rowH;
+    g += `<path d="M${cx + 70} ${H / 2 + 10} C ${cx + 90} ${H / 2 + 10}, ${cx + 90} ${y}, ${R - 6} ${y}" fill="none" stroke="${col(e)}" stroke-width="1.6" ${e.abroad ? 'stroke-dasharray="5 4"' : ""} ${e.pending ? 'stroke-dasharray="2 4"' : ""}/>`;
+    g += node(R, y - 4, `${e.party}${e.pending ? " (blocked)" : ""}`, "start", "#14213d") + node(R, y + 9, `${e.place} · ${money(e.amount, cur)}`, "start", col(e)); });
+  const abroad = m.logins.filter(l => l.country !== m.home.split(", ").pop());
+  return `<div class="mm"><h4>Money map: where it came from, where it went</h4>
+    <svg viewBox="0 0 ${W} ${H + 20}" width="100%" role="img" aria-label="Money flowing into and out of the account, by place">
+    ${node(L, 22, "Money in", "end", "#5b6575")}${node(R, 22, "Money out", "start", "#5b6575")}${g}
+    <rect x="${cx - 70}" y="${H / 2 - 16}" width="140" height="52" rx="12" fill="#14213d"/>
+    <text x="${cx}" y="${H / 2 + 4}" text-anchor="middle" font-size="12.5" fill="#fff" font-weight="700">${esc(name)}</text>
+    <text x="${cx}" y="${H / 2 + 22}" text-anchor="middle" font-size="11" fill="#9fb2dd">${esc(m.home)}</text></svg>
+    <div class="badges">${m.logins.map(l => `<span class="${l.country !== m.home.split(", ").pop() ? "b-bad" : "b-ok"}">Logged in from ${esc(l.place === l.country ? l.place : l.place + ", " + l.country)}: ${esc(l.share)}</span>`).join("")}
+    <span style="background:#fff;border:1px solid var(--line)"><b style="color:#b42318">━</b> disputed  <b style="color:#c26a00">┅</b> abroad  <b style="color:#0b5fff">━</b> local</span></div>
+    ${abroad.length ? `<div class="banner bad">The holder lives in ${esc(m.home)}, but ${esc(abroad[0].share)} of logins come from ${esc(abroad[0].place)}, ${esc(abroad[0].country)}.</div>` : ""}</div>`;
+}
 const checkList = cs => `<ul class="checks">${cs.map(c => `<li><span class="i ${c.ok ? "y" : c.over_freeze ? "w" : "x"}" aria-hidden="true">${c.ok ? "✓" : "!"}</span>
   <div><b>${esc(c.check)}</b><div class="small muted">${esc(c.detail)}</div></div></li>`).join("")}</ul>`;
 async function openCase(id) {
@@ -173,9 +203,15 @@ async function openCase(id) {
   const c = await api(`/api/cases/${id}`), cur = c.currency, inbound = c.kind === "inbound";
   const t = c.trace, e = c.essentials;
   $("#case").innerHTML = `<div class="card"><div class="row"><div><h1>${esc(c.customer.name)}</h1>
-      <div class="muted small">${esc(c.bank)} · ${esc(c.customer.account)} · ${esc(c.customer.segment)}, ${c.customer.age} · ${esc(c.rules.country)} rule pack</div></div>
+      <div class="muted small">${esc(c.bank)} · ${esc(c.customer.account)} · ${esc(c.customer.segment)}, ${c.customer.age} · lives in ${esc(c.customer.home)}</div>
+      <div class="badges"><span>${c.kind === "inbound" ? "Police freeze request" : "Restriction order"}</span><span>${esc(c.rules.country)} rule pack</span>
+      ${c.kind === "inbound" ? `<span>Disputed credit ${money(c.amount, c.currency)}</span>` : `<span class="b-ok">Account holder is the likely victim</span>`}
+      ${c.money_map.logins.some(l => l.country !== c.customer.home.split(", ").pop()) ? `<span class="b-bad">Logins from abroad</span>` : ""}</div></div>
       <div style="text-align:right"><div class="clock" data-due="${c.due}" style="font-size:16px"></div><div class="small muted">${esc(c.label)}</div></div></div>
-      ${inbound ? `<div class="grid" style="margin-top:12px"><div class="stat bad"><div class="v">${t.index_whole_account}x</div><div class="l">Proportionality Index if the whole account is frozen</div></div>
+      ${inbound && t.dissipated > 0 ? `<div class="grid" style="margin-top:12px"><div class="stat bad"><div class="v">${money(t.dissipated, cur)}</div><div class="l">Already moved on from this account</div></div>
+        <div class="stat"><div class="v">${money(t.traceable, cur)}</div><div class="l">Victim's money provably still here</div></div>
+        <div class="stat"><div class="v">${money(t.disputed, cur)}</div><div class="l">Disputed amount</div></div></div>` :
+        inbound ? `<div class="grid" style="margin-top:12px"><div class="stat bad"><div class="v">${t.index_whole_account}x</div><div class="l">Proportionality Index if the whole account is frozen</div></div>
         <div class="stat ok"><div class="v">${t.index_fairfreeze}x</div><div class="l">Proportionality Index with FairFreeze (1.0 = fair)</div></div>
         <div class="stat"><div class="v">${money(t.disputed, cur)}</div><div class="l">Disputed amount</div></div></div>` : ""}</div>
 
@@ -201,12 +237,14 @@ async function openCase(id) {
     <div class="grid"><div class="stat bad"><div class="v">${money(t.hold, cur)}</div><div class="l">Hold (disputed amount only)</div></div>
     <div class="stat ok"><div class="v">${money(t.release, cur)}</div><div class="l">Release now</div></div>
     <div class="stat"><div class="v">${money(t.traceable, cur)}</div><div class="l">Victim's money provably still here (lowest balance rule)</div></div></div>
-    ${t.dissipated > 0 ? `<div class="banner warn"><b>${money(t.dissipated, cur)} already left the account.</b> Next hops for the police: ${t.next_hops.map(h => `${esc(h.party)} ${money(h.amount, cur)} after ${h.minutes_after} min`).join("; ")}.</div>` : ""}`
+    ${t.dissipated > 0 ? `<div class="banner warn"><b>${money(t.dissipated, cur)} already left the account.</b> Next hops for the police: ${t.next_hops.map(h => `${esc(h.party)} ${money(h.amount, cur)} after ${h.minutes_after} min`).join("; ")}.</div>` : ""}
+    ${moneyMap(c.money_map, cur, c.customer.name)}`
     : `<div class="grid"><div class="stat ok"><div class="v">${money(e.allowance, cur)}</div><div class="l">Monthly living money kept open (average essentials x 1.2)</div></div>
       <div class="stat bad"><div class="v">${money(e.blocked_pending, cur)}</div><div class="l">Transfer to the scammers stopped by the order</div></div>
       <div class="stat"><div class="v">${money(e.already_sent, cur)}</div><div class="l">Already sent before the order</div></div></div>
       <table style="margin-top:10px"><tr><th>Month</th><th>Essential spending</th></tr>${Object.entries(e.monthly).map(([m, v]) => `<tr><td>${m}</td><td>${money(v, cur)}</td></tr>`).join("")}</table>
-      <p class="small"><b>Keep paying:</b> ${e.keep_paying.map(esc).join(", ")}<br><b>Blocked payees:</b> ${e.blocked_payees.map(esc).join(", ")}</p>`;
+      <p class="small"><b>Keep paying:</b> ${e.keep_paying.map(esc).join(", ")}<br><b>Blocked payees:</b> ${e.blocked_payees.map(esc).join(", ")}</p>
+      ${moneyMap(c.money_map, cur, c.customer.name)}`;
   if (c.request) showRequest(c.request); if (c.evidence) showEvidence(c.evidence, c); if (c.drafts) showDrafts(c.drafts, c);
   showAudit(c.audit);
   $("#b1").onclick = () => step("#b1", "#o1", async () => {
@@ -292,7 +330,7 @@ function showAudit(rows) {
 /* ---------------- regulator view ---------------- */
 async function regulatorPage() {
   const rows = await api("/api/regulator");
-  const req = rows.reduce((s, r) => s + r.index_requested, 0) / rows.length, ff = rows.reduce((s, r) => s + r.index_fairfreeze, 0) / rows.length;
+  const fair = rows.filter(r => r.requested_hold >= r.disputed), req = fair.reduce((s, r) => s + r.index_requested, 0) / fair.length, ff = fair.reduce((s, r) => s + r.index_fairfreeze, 0) / fair.length;
   $("#app").innerHTML = `<main style="grid-template-columns:1fr"><section><div class="card"><h1>Regulator view: proportionality across banks</h1>
     <p class="muted">The Proportionality Index is money held divided by money provably disputed. 1.0 is fair. Regulators can rank banks by it and see innocent customers freed faster.</p>
     <div class="grid"><div class="stat bad"><div class="v">${req.toFixed(1)}x</div><div class="l">Average index if whole accounts are frozen</div></div>
@@ -300,7 +338,7 @@ async function regulatorPage() {
     <div class="stat"><div class="v">${rows.length}</div><div class="l">Inbound freeze cases in this demo</div></div></div></div>
     <div class="card"><table><tr><th>Case</th><th>Country</th><th>Bank</th><th>Disputed</th><th>Whole-account hold</th><th>FairFreeze hold</th><th>Index before → after</th><th>Status</th></tr>
     ${rows.map(r => `<tr><td>${esc(r.id)}</td><td>${r.country}</td><td>${esc(r.bank)}</td><td>${r.disputed.toLocaleString()}</td><td>${r.requested_hold.toLocaleString()}</td><td>${r.fairfreeze_hold.toLocaleString()}</td>
-      <td><b>${r.index_requested}x → ${r.index_fairfreeze}x</b></td><td><span class="pill">${esc(r.status)}</span></td></tr>`).join("")}</table>
+      <td><b>${r.requested_hold < r.disputed ? "money already moved on" : `${r.index_requested}x → ${r.index_fairfreeze}x`}</b></td><td><span class="pill">${esc(r.status)}</span></td></tr>`).join("")}</table>
     <p class="small muted">An index above 1.0 after FairFreeze means the officer kept a wider hold on purpose, for example a likely mule account, and the reason is in the audit trail.</p></div></section></main>`;
 }
 
