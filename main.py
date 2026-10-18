@@ -461,4 +461,4 @@ def logo():
 @app.get("/")
 @app.get("/c/{cid}")
 def index(cid: str = ""):
-    return FileResponse(HERE / "static" / "index.html")
+    return FileResponse(HERE / "static" / "index.html", headers={"Cache-Control": "no-cache"})  # always the latest build
