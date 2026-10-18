@@ -9,6 +9,9 @@
     "deadline_label": "FairFreeze internal SLA: send a release memo within 72 hours (the SOP sets no fixed release time)",
     "allowed_legal_bases": ["106", "bnss", "102", "crpc", "1930", "ncrp", "cfcfrms", "section 94", "magistrate"],
     "notice_rule": "Tell the customer the case number, the amount on hold, the police station, and that the rest of the account is usable. Do not share investigation details.",
+    "utc_offset_minutes": 330,
+    "scope_rule": "IN-2",
+    "mule_rule": "IN-2",
     "languages": ["Hindi", "English"],
     "rules": [
       {"id": "IN-1", "source": "I4C SOP for NCRP and CFCFRMS, 2 Jan 2026", "summary": "Standard procedure for banks acting on cyber fraud requests raised through the national portal; Clause 10 gives account holders a grievance route."},
@@ -26,6 +29,9 @@
     "deadline_label": "Release within 4 hours to 1 working day once innocence is verified",
     "allowed_legal_bases": ["emergency decree", "technology crime", "aoc", "1441", "พระราชกำหนด", "อาชญากรรมทางเทคโนโลยี", "ศูนย์ปฏิบัติการแจ้งความออนไลน์"],
     "notice_rule": "Notify by SMS or app: which amount is suspended, that other money is usable, and to call AOC 1441 (press 2) to verify. Do not share investigation details.",
+    "utc_offset_minutes": 420,
+    "scope_rule": "TH-1",
+    "mule_rule": "TH-3",
     "languages": ["Thai", "English"],
     "rules": [
       {"id": "TH-1", "source": "Bank of Thailand and Thai Bankers' Association, Sept 2025", "summary": "Suspend only the amount linked to the fraud case, not the whole account; notify the customer by SMS or mobile banking."},
@@ -43,6 +49,7 @@
     "deadline_label": "Restriction order lasts up to 30 days; police may renew it up to 5 times",
     "allowed_legal_bases": ["protection from scams act", "restriction order", "section 3"],
     "notice_rule": "Explain kindly, in the customer's language, that the order protects them from a scam, that daily living money stays available, and how to ask the bank or police for help. Never blame the customer.",
+    "utc_offset_minutes": 480,
     "languages": ["Mandarin", "English"],
     "rules": [
       {"id": "SG-1", "source": "Protection from Scams Act 2025", "summary": "Police may order banks to restrict the banking transactions of a person believed to be about to send money to scammers, for up to 30 days, renewable up to 5 times."},

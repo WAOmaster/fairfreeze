@@ -5,6 +5,8 @@ Credentials: on Cloud Run set GOOGLE_GENAI_USE_VERTEXAI=true + GOOGLE_CLOUD_PROJ
 """
 import asyncio
 import functools
+import hashlib
+import hmac
 import os
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
@@ -26,7 +28,8 @@ MAX_BYTES = 10 * 1024 * 1024
 MAGIC = {b"%PDF": "application/pdf", b"\x89PNG": "image/png", b"\xff\xd8\xff": "image/jpeg"}
 HERE = Path(__file__).parent
 SAMPLES = {p.name for p in (HERE / "samples").glob("*.png")}
-SGT = timezone(timedelta(hours=8))
+# Signs customer links (/c/<case>?t=<token>). Unset keeps the open demo links working.
+LINK_SECRET = os.environ.get("LINK_SECRET", "").encode()
 
 app = FastAPI(title="FairFreeze")
 creds = None
@@ -42,13 +45,13 @@ db = None
 if os.environ.get("FIRESTORE", "on") == "on":
     from google.cloud import firestore
     db = firestore.Client(project=os.environ.get("GOOGLE_CLOUD_PROJECT"), credentials=creds)
-START = datetime.now(SGT).replace(second=0, microsecond=0)
 SAVED = ("status", "audit", "request", "evidence", "drafts", "decision")
 
 
 def fresh(cid):
-    # received is relative to start so the demo deadlines always look live
-    return {"received": START - timedelta(hours=engine.CASES[cid]["received_hours_ago"]), "status": "New", "audit": [],
+    # received is relative to now so the demo deadlines always look live; Reset demo restarts the clocks
+    now = datetime.now(timezone.utc).replace(second=0, microsecond=0)
+    return {"received": now - timedelta(hours=engine.CASES[cid]["received_hours_ago"]), "status": "New", "audit": [],
             "request": None, "evidence": None, "drafts": None, "decision": None, "running": False, "live_steps": [],
             "agent_error": None}
 
@@ -56,6 +59,19 @@ def fresh(cid):
 def save(cid):
     if db:
         db.collection("cases").document(cid).set({k: STATE[cid][k] for k in SAVED})
+
+
+def local_now(cid):
+    return datetime.now(engine.local_tz(engine.CASES[cid]))
+
+
+def link_token(cid):
+    return hmac.new(LINK_SECRET, cid.encode(), hashlib.sha256).hexdigest()[:20] if LINK_SECRET else ""
+
+
+def check_link(cid, t):
+    if LINK_SECRET and not hmac.compare_digest(t or "", link_token(cid)):
+        raise HTTPException(403, "This link is not valid. Please use the link your bank sent you.")
 
 
 STATE = {cid: fresh(cid) for cid in engine.CASES}
@@ -140,10 +156,23 @@ READ_RULES = ("Copy names, numbers and references exactly as printed. Do not cal
               "Convert Thai Buddhist Era years to Gregorian by subtracting 543. Dates as YYYY-MM-DD.")
 
 
+def is_auth_error(e):
+    """Bad key or missing Vertex access: retrying will not help."""
+    code = getattr(e, "code", None)
+    return code in (401, 403) or (code == 400 and "api key" in str(e).lower())
+
+
+def ai_failed(errors):
+    if errors and all(is_auth_error(e) for e in errors):
+        return HTTPException(502, "The AI service rejected the bank's credentials. Check the Gemini API key or Vertex AI access.")
+    return HTTPException(502, "The AI service is busy or over its limit. Please try again in a minute.")
+
+
 async def ask(parts, schema, system, models=READ):
     # a slow model must not hang the case: give up after 90 s and try the next one
     cfg = types.GenerateContentConfig(system_instruction=system, temperature=0, http_options=types.HttpOptions(timeout=110_000),
                                       response_mime_type="application/json", response_schema=schema)
+    errors = []
     for model in models:
         try:
             r = await asyncio.wait_for(client.aio.models.generate_content(model=model, contents=parts, config=cfg), 100 if models is REASON else 45)
@@ -152,7 +181,8 @@ async def ask(parts, schema, system, models=READ):
             print(f"gemini {model}: no structured result", flush=True)
         except Exception as e:  # busy/quota on one model: try the next, else tell the UI
             print(f"gemini {model} failed: {e}", flush=True)
-    raise HTTPException(502, "The AI service is busy or over its limit. Please try again in a minute.")
+            errors.append(e)
+    raise ai_failed(errors)
 
 
 async def read_upload(f: UploadFile):
@@ -176,8 +206,19 @@ def get_case(cid):
 
 
 def log(st, who, what):
-    st["audit"].append({"at": datetime.now(SGT).isoformat(timespec="seconds"), "who": who, "what": what})
-    save(next(k for k, v in STATE.items() if v is st))
+    cid = next(k for k, v in STATE.items() if v is st)
+    st["audit"].append({"at": local_now(cid).isoformat(timespec="seconds"), "who": who, "what": what})
+    save(cid)
+
+
+def clear_papers(st):
+    """New request or evidence facts make earlier drafts and any sign-off stale."""
+    st.update(drafts=None, decision=None)
+
+
+def not_while_running(st):
+    if st["running"]:
+        raise HTTPException(409, "The Case Agent is still working on this case. Wait for it to finish.")
 
 
 def summary(cid):
@@ -201,7 +242,8 @@ def case(cid: str):
     out = {**summary(cid), "customer": c["customer"], "bank": c["bank"], "language": c["language"],
            "rules": engine.RULES[c["country"]], "requisition": c["requisition"], "audit": st["audit"], "request": st["request"], "running": st["running"],
            "live_steps": st["live_steps"], "agent_error": st["agent_error"],
-           "evidence": st["evidence"], "drafts": st["drafts"], "decision": st["decision"]}
+           "evidence": st["evidence"], "drafts": st["drafts"], "decision": st["decision"],
+           "customer_link": f"/c/{cid}" + (f"?t={link_token(cid)}" if LINK_SECRET else "")}
     out["money_map"] = engine.money_map(c)
     if c["kind"] == "inbound":
         out["trace"] = engine.trace(c)
@@ -214,20 +256,25 @@ def case(cid: str):
 @app.post("/api/cases/{cid}/request")
 async def check_request(cid: str, file: Optional[UploadFile] = File(None)):
     c, st = get_case(cid)
+    not_while_running(st)
     data, mime = await read_upload(file) if file else sample(c["requisition"])
     req = await ask([types.Part.from_bytes(data=data, mime_type=mime),
                      "Read this freeze or restriction request sent to a bank."], Requisition,
                     "You read police, court and regulator requests to banks, in any language. " + READ_RULES)
     req = req.model_dump()
     st["request"] = {"extracted": req, "checks": engine.check_request(c, req)}
+    clear_papers(st)
     st["status"] = "Request checked"
     log(st, "FairFreeze", "Request read and checked against the account and the rule pack")
     return st["request"]
 
 
 @app.post("/api/cases/{cid}/evidence")
-async def evidence(cid: str, files: list[UploadFile] = File(None), source: str = "officer"):
+async def evidence(cid: str, files: list[UploadFile] = File(None), source: str = "officer", t: str = ""):
     c, st = get_case(cid)
+    if source == "customer":
+        check_link(cid, t)
+    not_while_running(st)
     blobs = [await read_upload(f) for f in files] if files else [sample(n) for n in c["evidence"]]
     parts = [types.Part.from_bytes(data=d, mime_type=m) for d, m in blobs]
     if c["kind"] == "restriction":
@@ -247,6 +294,7 @@ async def evidence(cid: str, files: list[UploadFile] = File(None), source: str =
         level = engine.strength(checks, sigs, hits)
         st["evidence"] = {"source": source, "pack": pack, "checks": checks, "signals": sigs, "reuse": hits,
                           "strength": level, "plan": engine.plan(c, level)}
+    clear_papers(st)
     st["status"] = "Evidence reviewed"
     log(st, "Customer" if source == "customer" else "FairFreeze", "Evidence received and checked")
     return st["evidence"]
@@ -317,6 +365,7 @@ async def run_agent(cid, c, st):
         "and check the country rules. Numbers come only from tools. Then write a short assessment for the officer: "
         "what happened, the recommended action and why, anything the automatic checks may have missed, and the rule ids "
         "that apply. You recommend; a human officer decides. Plain English, no em-dashes.")
+    errors = []
     for model in REASON:
         st["live_steps"].clear()  # the page shows the steps of the model that is answering now
         try:
@@ -328,7 +377,8 @@ async def run_agent(cid, c, st):
             return {"model": model, "steps": steps, "assessment": r.text or ""}
         except Exception as e:
             print(f"agent {model} failed: {e}", flush=True)
-    raise HTTPException(502, "The AI service is busy or over its limit. Please try again in a minute.")
+            errors.append(e)
+    raise ai_failed(errors)
 
 
 @app.post("/api/cases/{cid}/draft")
@@ -397,8 +447,10 @@ def approve(cid: str, a: Approval):
     c, st = get_case(cid)
     if not st["drafts"]:
         raise HTTPException(409, "Draft the papers first")
+    if st["decision"]:
+        raise HTTPException(409, "This case is already approved")
     st["decision"] = {**st["evidence"]["plan"], "officer": a.officer[:60], "note": a.note[:500],
-                      "at": datetime.now(SGT).isoformat(timespec="minutes")}
+                      "at": local_now(cid).isoformat(timespec="minutes")}
     st["status"] = "Approved"
     log(st, a.officer[:60], f"Approved: {st['evidence']['plan']['action']}")
     return st["decision"]
@@ -407,17 +459,21 @@ def approve(cid: str, a: Approval):
 @app.post("/api/reset")
 def reset():
     """Puts every demo case back to New (evaluators share one deployment)."""
+    skipped = []
     for cid in STATE:
-        if not STATE[cid]["running"]:
-            STATE[cid] = fresh(cid)
-            save(cid)
-    return {"reset": True}
+        if STATE[cid]["running"]:  # the agent's background job still writes to this case
+            skipped.append(engine.CASES[cid]["customer"]["name"])
+            continue
+        STATE[cid] = fresh(cid)
+        save(cid)
+    return {"reset": True, "skipped": skipped}
 
 
 @app.get("/api/public/{cid}")
-def public(cid: str):
+def public(cid: str, t: str = ""):
     """What the customer's link may show: amounts and deadline only, never the investigation (tipping-off rule)."""
     c, st = get_case(cid)
+    check_link(cid, t)
     r = engine.RULES[c["country"]]
     out = {"id": cid, "kind": c["kind"], "first_name": c["customer"]["name"].split()[0], "language": c["language"],
            "currency": r["currency"], "bank": c["bank"], "deadline_label": r["deadline_label"],
@@ -438,7 +494,8 @@ def regulator():
         if c["kind"] != "inbound":
             continue
         t, st = engine.trace(c), STATE[cid]
-        out.append({"id": cid, "country": c["country"], "bank": c["bank"], "disputed": t["disputed"],
+        out.append({"id": cid, "country": c["country"], "currency": engine.RULES[c["country"]]["currency"],
+                    "bank": c["bank"], "disputed": t["disputed"],
                     "requested_hold": t["balance"], "fairfreeze_hold": (st["decision"] or {}).get("hold", t["hold"]),
                     "index_requested": t["index_whole_account"],
                     "index_fairfreeze": round((st["decision"] or {}).get("hold", t["hold"]) / t["disputed"], 2),

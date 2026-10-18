@@ -9,7 +9,7 @@ import json
 import math
 import re
 from collections import defaultdict
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 HERE = Path(__file__).parent
@@ -191,7 +191,7 @@ def check_request(case, req):
                     "detail": f"request {req['amount']:,.0f}; bank {f['amount']:,}"})
         whole = req["action_requested"] == "freeze_whole_account"
         out.append({"check": "Scope: hold limited to the disputed amount", "ok": not whole, "over_freeze": whole,
-                    "detail": (f"Request asks to freeze the whole account; {r['rules'][1 if case['country'] == 'IN' else 0]['id']} "
+                    "detail": (f"Request asks to freeze the whole account; {r['scope_rule']} "
                                "limits the hold to the disputed amount") if whole else "Request is limited to the amount"})
     else:
         out.append({"check": "Order length within the legal limit (30 days)", "ok": 0 < req["validity_days"] <= 30,
@@ -233,7 +233,8 @@ def plan(case, strength_level):
     t = trace(case)
     if strength_level == "red_flag":
         return {"action": "keep_full_hold_escalate", "hold": t["balance"], "release": 0, "notify_customer": False,
-                "why": "Strong mule indicators: the bank may hold beyond the disputed amount (IN-2) and must not tip off the holder."}
+                "why": f"Strong mule indicators: the bank may hold beyond the disputed amount ({RULES[case['country']]['mule_rule']}) "
+                       "and must not tip off the holder."}
     if strength_level in ("strong", "moderate"):
         return {"action": "release_rest_keep_disputed", "hold": t["hold"], "release": t["release"], "notify_customer": True,
                 "why": "Hold only the disputed amount; release the rest now and send the release memo with the evidence pack."}
@@ -259,11 +260,16 @@ def essentials(case):
             "blocked_pending": -sum(p["amount"] for p in case.get("pending", [])), "rows": rows}
 
 
+def local_tz(case):
+    return timezone(timedelta(minutes=RULES[case["country"]]["utc_offset_minutes"]))
+
+
 def deadline(case, received_at):
-    r = RULES[case["country"]]
+    """Received and due times in the case country's local time."""
+    r, tz = RULES[case["country"]], local_tz(case)
     due = received_at + timedelta(hours=r["review_deadline_hours"])
-    return {"received": received_at.isoformat(timespec="minutes"), "due": due.isoformat(timespec="minutes"),
-            "label": r["deadline_label"]}
+    return {"received": received_at.astimezone(tz).isoformat(timespec="minutes"),
+            "due": due.astimezone(tz).isoformat(timespec="minutes"), "label": r["deadline_label"]}
 
 
 def restitution(pool, claims):
@@ -290,6 +296,7 @@ def self_check():
     assert x["next_hops"][0]["party"] == "GLOBALPAY WALLET 9" and x["next_hops"][0]["minutes_after"] == 16
     n = trace(CASES["TH-2026-1520"])
     assert (n["hold"], n["release"]) == (1250, 5480), n
+    assert "TH-3" in plan(CASES["TH-2026-1520"], "red_flag")["why"] and "IN-2" in plan(CASES["IN-2026-0419"], "red_flag")["why"]
     e = essentials(CASES["SG-2026-0077"])
     assert e["allowance"] == 1100 and e["already_sent"] == 35000, e
     sig = {g["name"]: g["points"] for g in signals(CASES["IN-2026-0419"])}

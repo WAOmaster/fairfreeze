@@ -12,7 +12,18 @@
 --ok:#0a7a4f;--ok-bg:#e6f6ef;--warn:#9a5b00;--warn-bg:#fff4e0;--bad:#b42318;--bad-bg:#fdecea;--soft:#eef3ff}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 Inter,'Segoe UI','Nirmala UI','Leelawadee UI','Microsoft YaHei',system-ui,sans-serif}
 button{font:inherit;cursor:pointer;border:0;border-radius:8px;padding:9px 14px;background:var(--brand);color:var(--brand-ink);font-weight:600}
-button.ghost{background:var(--soft);color:var(--brand)}button:disabled{opacity:.55;cursor:wait}
+button.ghost{background:var(--soft);color:var(--brand)}button:disabled{opacity:.55;cursor:not-allowed}
+button:hover:not(:disabled),.btn:hover{filter:brightness(1.08)}button.ghost:hover:not(:disabled),.btn.ghost:hover{filter:none;background:#e0e9ff}
+.btn{display:inline-block;text-decoration:none;font-weight:600;border-radius:8px;padding:9px 14px;background:var(--brand);color:var(--brand-ink)}.btn.ghost{background:var(--soft);color:var(--brand)}
+.pick{display:inline-flex;align-items:center;gap:10px;flex-wrap:wrap;min-width:0}.pick .fn{font-size:13px;color:var(--muted);max-width:260px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pick label,.drop{position:relative;cursor:pointer}.pick label{display:inline-flex;align-items:center;gap:6px;font-weight:600;border-radius:8px;padding:8px 13px;background:#fff;color:var(--brand);border:1px dashed #9dbcff}
+.pick label:hover{background:var(--soft)}.pick input,.drop input{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer}
+.pick label:focus-within,.drop:focus-within{outline:3px solid #8db4ff;outline-offset:2px}
+.drop{display:flex;flex-direction:column;align-items:center;gap:4px;border:2px dashed #b9cdf8;background:var(--soft);border-radius:12px;padding:18px 14px;text-align:center;color:#173a8a;font-weight:600}
+.drop.over{border-color:var(--brand);background:#e0e9ff}.drop .fn{font-weight:400;font-size:13px;color:var(--muted);word-break:break-word}.drop .hint{font-weight:400;font-size:12px;color:var(--muted)}
+.scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}.mm .scroll svg{min-width:640px}
+dialog{border:1px solid var(--line);border-radius:12px;padding:18px 20px;max-width:380px;width:calc(100% - 32px);color:var(--ink);box-shadow:0 20px 50px rgba(20,33,61,.25)}
+dialog::backdrop{background:rgba(20,33,61,.45)}dialog h3{margin:0 0 6px;font-size:17px}dialog .row{justify-content:flex-end;margin-top:14px}
 button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid #8db4ff;outline-offset:2px}
 header{background:var(--ink);color:#fff;padding:12px 22px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
 .logo{font-weight:700;font-size:20px;letter-spacing:.2px}.logo span{color:#7fb0ff}.tag{color:#c7d2e6;font-size:13px}
@@ -22,7 +33,7 @@ header{background:var(--ink);color:#fff;padding:12px 22px;display:flex;align-ite
 .mm{margin-top:14px}.mm h4{margin:0 0 4px}
 .guide{background:linear-gradient(135deg,#eef3ff,#e6f6ef);border-color:#cfe0ff}.guide ol{margin:6px 0 0;padding-left:20px}.guide li{margin:4px 0}.guide .row button{padding:4px 10px;font-size:13px}
 nav{margin-left:auto;display:flex;gap:6px}nav button{background:transparent;color:#c7d2e6}nav button.on{background:#24365e;color:#fff}
-main{display:grid;grid-template-columns:300px 1fr;gap:18px;padding:18px 22px;max-width:1400px;margin:0 auto}
+main{display:grid;grid-template-columns:300px 1fr;gap:18px;padding:18px 22px;max-width:1400px;margin:0 auto}main>*{min-width:0}
 @media(max-width:900px){main{grid-template-columns:1fr;padding:12px 16px}}
 .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin-bottom:14px}
 .inbox h3{margin:0 0 10px;font-size:13px;text-transform:uppercase;color:var(--muted);letter-spacing:.6px}
@@ -53,7 +64,9 @@ table{border-collapse:collapse;width:100%;font-size:14px}td,th{text-align:left;p
 .spin{display:inline-block;width:14px;height:14px;border:2px solid #cfe0ff;border-top-color:var(--brand);border-radius:50%;animation:r 1s linear infinite;vertical-align:-2px;margin-right:6px}@keyframes r{to{transform:rotate(360deg)}}
 .hidden{display:none}.err{color:var(--bad)}svg text{font-family:inherit}
 .cust{max-width:520px;margin:0 auto;padding:16px}.cust .big{font-size:28px;font-weight:700}
-input[type=text]{font:inherit;padding:8px 10px;border:1px solid var(--line);border-radius:8px}
+input[type=text]{font:inherit;color:var(--ink);padding:8px 10px;border:1px solid #cfd6e0;border-radius:8px;background:#fff}input[type=text]:focus{border-color:var(--brand)}
+.actions{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:8px}
+@media(max-width:600px){header{padding:12px 16px}nav{margin-left:0;width:100%}nav button{flex:1;padding:8px 4px;font-size:13px;white-space:nowrap}.ctx{flex-direction:column;gap:2px;padding:8px 16px}.ctx .sep{display:none}.casehead{flex-direction:column;align-items:flex-start}.casehead>div:last-child{text-align:left!important}.actions>button,.actions>.btn{flex:1 1 100%;text-align:center}.pick{width:100%}.pick .fn{max-width:none;flex:1}}
 </style>
 </head>
 <body>
@@ -70,6 +83,28 @@ const money = (n, cur) => `${cur} ${Number(n).toLocaleString("en-US", {maximumFr
 const LABEL = {strong:"Strong evidence", moderate:"Moderate evidence", weak:"Weak evidence", red_flag:"Red flag: likely mule", victim:"Scam victim"};
 const ACTION = {release_rest_keep_disputed:"Hold only the disputed amount, release the rest now", hold_disputed_request_more:"Hold only the disputed amount, ask for one more document",
   keep_full_hold_escalate:"Keep full hold, escalate to police, no customer notice", restrict_with_essentials:"Keep the order, keep living money open, block the scammers"};
+const CLIP = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5l-8.6 8.6a5.5 5.5 0 0 1-7.8-7.8l8.6-8.6a3.7 3.7 0 0 1 5.2 5.2l-8.6 8.6a1.8 1.8 0 0 1-2.6-2.6l7.9-7.9"/></svg>`;
+const ACCEPT = "image/png,image/jpeg,application/pdf";
+const errBox = m => `<div class="banner bad">${esc(m)}</div>`;
+// a file picker in the console's own style; the native input stays inside it for keyboard and screen readers
+const picker = (id, label, none) => `<span class="pick"><label>${CLIP}${esc(label)}<input type="file" id="${id}" accept="${ACCEPT}" aria-label="${esc(label)}"></label><span class="fn" id="${id}-fn">${esc(none)}</span></span>`;
+function wirePicker(id, none) {
+  const i = $("#" + id), fn = $(`#${id}-fn`), zone = i.closest(".drop");
+  const show = () => { fn.textContent = [...i.files].map(f => f.name).join(", ") || none; };
+  i.onchange = show;
+  if (zone) {
+    zone.ondragover = e => { e.preventDefault(); zone.classList.add("over"); };
+    zone.ondragleave = () => zone.classList.remove("over");
+    zone.ondrop = e => { e.preventDefault(); zone.classList.remove("over"); i.files = e.dataTransfer.files; show(); };
+  }
+}
+function confirmDialog(title, text, ok) {
+  return new Promise(res => {
+    const d = document.createElement("dialog");
+    d.innerHTML = `<form method="dialog"><h3>${esc(title)}</h3><p class="small muted" style="margin:0">${esc(text)}</p><div class="row"><button class="ghost" value="no">Cancel</button><button value="yes">${esc(ok)}</button></div></form>`;
+    document.body.append(d); d.onclose = () => { res(d.returnValue === "yes"); d.remove(); }; d.showModal();
+  });
+}
 async function api(path, opts) {
   const r = await fetch(path, opts); const j = await r.json().catch(() => ({}));
   if (!r.ok) throw new Error(j.detail || `Request failed (${r.status})`); return j;
@@ -91,21 +126,23 @@ setInterval(() => document.querySelectorAll("[data-due]").forEach(el => { const 
 const T = {
   Hindi: {hi:n=>`नमस्ते ${n} जी`, safe:"आपका खाता चालू है। आप बाकी पैसे इस्तेमाल कर सकते हैं।", held:"जाँच के लिए रोकी गई राशि", free:"आप अभी इस्तेमाल कर सकते हैं",
     why:"पुलिस की शिकायत में एक भुगतान का ज़िक्र है। सिर्फ़ उतनी राशि रोकी गई है, पूरा खाता नहीं।", ask:"अपना पक्ष बताइए: बिक्री की चैट, बिल, कूरियर रसीद या फ़ोटो भेजें।",
-    up:"फ़ाइलें भेजें", sample:"डेमो फ़ाइलें इस्तेमाल करें", done:"धन्यवाद। आपके दस्तावेज़ मिल गए। बैंक अधिकारी जल्द समीक्षा करेंगे।", lang:"English"},
+    up:"फ़ाइलें भेजें", pick:"फ़ाइलें चुनें", none:"कोई फ़ाइल नहीं चुनी गई", hint:"PNG, JPG या PDF, 10 MB तक", sample:"डेमो फ़ाइलें इस्तेमाल करें", done:"धन्यवाद। आपके दस्तावेज़ मिल गए। बैंक अधिकारी जल्द समीक्षा करेंगे।", lang:"English"},
   Thai: {hi:n=>`สวัสดีค่ะ คุณ${n}`, safe:"บัญชีของคุณยังใช้งานได้ คุณใช้เงินส่วนที่เหลือได้ตามปกติ", held:"ยอดที่ระงับชั่วคราวเพื่อตรวจสอบ", free:"ยอดที่ใช้ได้ทันที",
     why:"มีรายการรับโอนหนึ่งรายการที่อยู่ในเรื่องร้องเรียน ธนาคารระงับเฉพาะยอดนั้น ไม่ใช่ทั้งบัญชี", ask:"ส่งหลักฐานการขาย: แชทกับลูกค้า ใบเสร็จ เลขพัสดุ หรือรูปสินค้า",
-    up:"ส่งไฟล์", sample:"ใช้ไฟล์ตัวอย่าง (เดโม)", done:"ขอบคุณค่ะ ธนาคารได้รับเอกสารแล้ว เจ้าหน้าที่จะตรวจสอบโดยเร็ว โทร 1441 กด 2 เพื่อยืนยันตัวตน", lang:"English"},
+    up:"ส่งไฟล์", pick:"เลือกไฟล์", none:"ยังไม่ได้เลือกไฟล์", hint:"PNG, JPG หรือ PDF ไม่เกิน 10 MB", sample:"ใช้ไฟล์ตัวอย่าง (เดโม)", done:"ขอบคุณค่ะ ธนาคารได้รับเอกสารแล้ว เจ้าหน้าที่จะตรวจสอบโดยเร็ว โทร 1441 กด 2 เพื่อยืนยันตัวตน", lang:"English"},
   Mandarin: {hi:n=>`${n}女士，您好`, safe:"这是为了保护您的储蓄。日常生活费和账单照常可以使用。", allow:"每月可用生活费", keep:"照常支付",
     why:"警方认为有人正在骗您转账。这不是您的错，骗子非常狡猾。", ask:"如果方便，请把与对方的聊天记录发给我们，我们会帮您看清楚。",
-    up:"发送文件", sample:"使用示例文件（演示）", done:"谢谢您。我们已收到，银行人员会尽快联系您。", lang:"English"},
+    up:"发送文件", pick:"选择文件", none:"未选择文件", hint:"PNG、JPG 或 PDF，最大 10 MB", sample:"使用示例文件（演示）", done:"谢谢您。我们已收到，银行人员会尽快联系您。", lang:"English"},
   English: {hi:n=>`Hello ${n}`, safe:"Your account is still open. You can use the rest of your money.", held:"Held for review", free:"Free to use now",
     allow:"Monthly living money", keep:"Still paid as usual",
     why:"A police complaint mentions one payment. Only that amount is held, not your whole account.", ask:"Tell us your side: send the sale chat, bill, courier slip or photos.",
-    up:"Send files", sample:"Use demo files", done:"Thank you. We have your documents. A bank officer will review them soon.", lang:null}
+    up:"Send files", pick:"Choose files or drop them here", none:"No file chosen", hint:"PNG, JPG or PDF, up to 10 MB", sample:"Use demo files", done:"Thank you. We have your documents. A bank officer will review them soon.", lang:null}
 };
 async function customerPage(cid) {
-  $("#nav").classList.add("hidden");
-  const p = await api(`/api/public/${cid}`); let lang = p.language;
+  // the customer sees their bank, not the officer's desk details
+  ["#nav", "#ctx", ".tag"].forEach(s => $(s).classList.add("hidden"));
+  const tok = encodeURIComponent(new URLSearchParams(location.search).get("t") || "");
+  const p = await api(`/api/public/${cid}?t=${tok}`); let lang = p.language;
   const draw = () => {
     const t = {...T.English, ...T[lang]}, en = T.English;
     const sgWhy = lang === "English" && p.kind === "restriction" ? "Police believe someone is trying to scam you. This is not your fault; scammers are very skilled." : t.why;
@@ -119,17 +156,19 @@ async function customerPage(cid) {
         <p class="small">${t.keep || en.keep}: ${p.keep_paying.map(esc).join(", ")}</p>`}
       <p>${p.kind === "restriction" ? sgWhy : t.why}</p><p class="small muted">${esc(p.deadline_label)}</p></div>
       <div class="card"><p><b>${p.kind === "restriction" ? sgAsk : t.ask}</b></p>
-      <input type="file" id="f" multiple accept="image/png,image/jpeg,application/pdf" aria-label="${t.up}">
-      <div class="row" style="margin-top:10px;justify-content:flex-start"><button id="send">${t.up}</button><button class="ghost" id="demo">${t.sample}</button></div>
+      <label class="drop">${CLIP}<span>${t.pick}</span><span class="fn" id="f-fn">${t.none}</span><span class="hint">${t.hint}</span>
+        <input type="file" id="f" multiple accept="${ACCEPT}" aria-label="${esc(t.pick)}"></label>
+      <div class="actions" style="margin-top:12px"><button id="send">${t.up}</button><button class="ghost" id="demo">${t.sample}</button></div>
       <p id="msg" aria-live="polite">${p.submitted ? t.done : ""}</p></div></div>`;
+    wirePicker("f", t.none);
     $("#lg").onclick = () => { lang = lang === "English" ? p.language : "English"; draw(); };
     const go = async useSample => {
       const fd = new FormData(); const files = $("#f").files;
       if (!useSample && !files.length) { $("#msg").textContent = t.ask; return; }
       if (!useSample) [...files].forEach(f => fd.append("files", f));
       $("#msg").innerHTML = `<span class="spin"></span>`; $("#send").disabled = $("#demo").disabled = true;
-      try { await api(`/api/cases/${cid}/evidence?source=customer`, {method: "POST", body: useSample ? undefined : fd}); $("#msg").textContent = t.done; }
-      catch (e) { $("#msg").innerHTML = `<span class="err">${esc(e.message)}</span>`; }
+      try { await api(`/api/cases/${cid}/evidence?source=customer&t=${tok}`, {method: "POST", body: useSample ? undefined : fd}); $("#msg").textContent = t.done; }
+      catch (e) { $("#msg").innerHTML = errBox(e.message); }
       $("#send").disabled = $("#demo").disabled = false;
     };
     $("#send").onclick = () => go(false); $("#demo").onclick = () => go(true);
@@ -147,7 +186,7 @@ async function consolePage() {
     <li><b>Vikram</b>: already processed. See why his perfect-looking documents are a red flag, and why no letter goes to him.</li>
     <li><b>Nok</b> (Thai) and <b>Mrs Tan</b> (Singapore, Mandarin): other countries, same engine.</li>
     <li>Open <b>Regulator view</b> at the top, and the <b>customer link</b> in step 3.</li></ol></div>`;
-  const due = cases.filter(c => (new Date(c.due) - new Date()) < 24 * 3600e3).length, open = cases.filter(c => c.status !== "Approved").length;
+  const due = cases.filter(c => c.status !== "Approved" && (new Date(c.due) - new Date()) < 24 * 3600e3).length, open = cases.filter(c => c.status !== "Approved").length;
   $("#app").innerHTML = `<main><aside class="inbox">${guide}<div class="card"><h3>Freeze cases</h3>
     <div class="kpis"><div><b>${open}</b><span>open cases</span></div><div><b>${due}</b><span>due within 24h</span></div><div><b>3</b><span>countries</span></div></div><div id="list"></div>
     <p class="small muted">Synthetic demo data. All people, banks and accounts are fictional.</p></div></aside><section id="case"></section></main>`;
@@ -187,11 +226,11 @@ function moneyMap(m, cur, name) {
     g += node(R, y - 4, `${e.party}${e.pending ? " (blocked)" : ""}`, "start", "#14213d") + node(R, y + 9, `${e.place} · ${money(e.amount, cur)}`, "start", col(e)); });
   const abroad = m.logins.filter(l => l.country !== m.home.split(", ").pop());
   return `<div class="mm"><h4>Money map: where it came from, where it went</h4>
-    <svg viewBox="0 0 ${W} ${H + 20}" width="100%" role="img" aria-label="Money flowing into and out of the account, by place">
+    <div class="scroll"><svg viewBox="0 0 ${W} ${H + 20}" width="100%" role="img" aria-label="Money flowing into and out of the account, by place">
     ${node(L, 22, "Money in", "end", "#5b6575")}${node(R, 22, "Money out", "start", "#5b6575")}${g}
     <rect x="${cx - 70}" y="${H / 2 - 16}" width="140" height="52" rx="12" fill="#14213d"/>
     <text x="${cx}" y="${H / 2 + 4}" text-anchor="middle" font-size="12.5" fill="#fff" font-weight="700">${esc(name)}</text>
-    <text x="${cx}" y="${H / 2 + 22}" text-anchor="middle" font-size="11" fill="#9fb2dd">${esc(m.home)}</text></svg>
+    <text x="${cx}" y="${H / 2 + 22}" text-anchor="middle" font-size="11" fill="#9fb2dd">${esc(m.home)}</text></svg></div>
     <div class="badges">${m.logins.map(l => `<span class="${l.country !== m.home.split(", ").pop() ? "b-bad" : "b-ok"}">Logged in from ${esc(l.place === l.country ? l.place : l.place + ", " + l.country)}: ${esc(l.share)}</span>`).join("")}
     <span style="background:#fff;border:1px solid var(--line)"><b style="color:#b42318">━</b> disputed  <b style="color:#c26a00">┅</b> abroad  <b style="color:#0b5fff">━</b> local</span></div>
     ${abroad.length ? `<div class="banner bad">The holder lives in ${esc(m.home)}, but ${esc(abroad[0].share)} of logins come from ${esc(abroad[0].place)}, ${esc(abroad[0].country)}.</div>` : ""}</div>`;
@@ -201,8 +240,9 @@ const checkList = cs => `<ul class="checks">${cs.map(c => `<li><span class="i ${
 async function openCase(id) {
   current = id; drawList();
   const c = await api(`/api/cases/${id}`), cur = c.currency, inbound = c.kind === "inbound";
+  if (current !== id) return;
   const t = c.trace, e = c.essentials;
-  $("#case").innerHTML = `<div class="card"><div class="row"><div><h1>${esc(c.customer.name)}</h1>
+  $("#case").innerHTML = `<div class="card"><div class="row casehead"><div><h1>${esc(c.customer.name)}</h1>
       <div class="muted small">${esc(c.bank)} · ${esc(c.customer.account)} · ${esc(c.customer.segment)}, ${c.customer.age} · lives in ${esc(c.customer.home)}</div>
       <div class="badges"><span>${c.kind === "inbound" ? "Police freeze request" : "Restriction order"}</span><span>${esc(c.rules.country)} rule pack</span>
       ${c.kind === "inbound" ? `<span>Disputed credit ${money(c.amount, c.currency)}</span>` : `<span class="b-ok">Account holder is the likely victim</span>`}
@@ -217,13 +257,13 @@ async function openCase(id) {
 
     <div class="card"><h2><span class="n">1</span>Check the freeze request</h2>
       <div class="thumbs"><a href="#" id="reqthumb" target="_blank" rel="noopener"></a></div>
-      <div class="row" style="justify-content:flex-start;gap:8px;margin-top:8px"><button id="b1">Read the request with Gemini</button><input type="file" id="f1" accept="image/png,image/jpeg,application/pdf" aria-label="Upload another request"></div>
+      <div class="actions"><button id="b1">Read the request with Gemini</button>${picker("f1", "Choose File", "No file chosen")}</div>
       <div id="o1"></div></div>
 
     <div class="card"><h2><span class="n">2</span>${inbound ? "Trace the money" : "Keep daily living money open"}</h2><div id="o2"></div></div>
 
     <div class="card"><h2><span class="n">3</span>Customer's side of the story</h2>
-      <div class="row" style="justify-content:flex-start;gap:8px"><a href="/c/${c.id}" target="_blank" rel="noopener"><button class="ghost" tabindex="-1">Open the customer link</button></a>
+      <div class="actions"><a class="btn ghost" href="${esc(c.customer_link)}" target="_blank" rel="noopener">Open the customer link</a>
       <button id="b3">Use the sample evidence</button></div><div id="o3"></div></div>
 
     <div class="card"><h2><span class="n">4</span>Case Agent: investigate and draft</h2>
@@ -245,6 +285,7 @@ async function openCase(id) {
       <table style="margin-top:10px"><tr><th>Month</th><th>Essential spending</th></tr>${Object.entries(e.monthly).map(([m, v]) => `<tr><td>${m}</td><td>${money(v, cur)}</td></tr>`).join("")}</table>
       <p class="small"><b>Keep paying:</b> ${e.keep_paying.map(esc).join(", ")}<br><b>Blocked payees:</b> ${e.blocked_payees.map(esc).join(", ")}</p>
       ${moneyMap(c.money_map, cur, c.customer.name)}`;
+  wirePicker("f1", "No file chosen");
   if (c.request) showRequest(c.request); if (c.evidence) showEvidence(c.evidence, c); if (c.drafts) showDrafts(c.drafts, c);
   showAudit(c.audit);
   $("#b1").onclick = () => step("#b1", "#o1", async () => {
@@ -254,17 +295,23 @@ async function openCase(id) {
   $("#b3").onclick = () => step("#b3", "#o3", async () => showEvidence(await api(`/api/cases/${id}/evidence`, {method: "POST"}), c), "Gemini is reading the customer's documents");
   $("#b4").onclick = async () => {
     $("#b4").disabled = true;
-    try { await api(`/api/cases/${id}/draft`, {method: "POST"}); watchAgent(id); } catch (e) { $("#o4").innerHTML = `<p class="err">${esc(e.message)}</p>`; $("#b4").disabled = false; }
+    try { await api(`/api/cases/${id}/draft`, {method: "POST"}); watchAgent(id); } catch (e) { $("#o4").innerHTML = errBox(e.message); $("#b4").disabled = false; }
   };
   if (c.running) watchAgent(id);
 }
+const watching = new Set();
 async function watchAgent(id) {
   $("#b4").disabled = true;
+  if (watching.has(id)) return;
+  watching.add(id);
+  try { await pollAgent(id); } finally { watching.delete(id); }
+}
+async function pollAgent(id) {
   while (current === id) {
     const c = await api(`/api/cases/${id}`);
     if (!c.running) {
       $("#b4").disabled = false;
-      if (c.agent_error) $("#o4").innerHTML = `<p class="err">${esc(c.agent_error)}</p>`; else if (c.drafts) showDrafts(c.drafts, c);
+      if (c.agent_error) $("#o4").innerHTML = errBox(c.agent_error); else if (c.drafts) showDrafts(c.drafts, c);
       refresh(); return;
     }
     $("#o4").innerHTML = `<p class="muted"><span class="spin"></span>Gemini 4 Argon is investigating. Tools it has chosen so far:</p>
@@ -274,7 +321,7 @@ async function watchAgent(id) {
 }
 async function step(btn, out, fn, wait) {
   $(btn).disabled = true; $(out).innerHTML = `<p class="muted"><span class="spin"></span>${wait}…</p>`;
-  try { await fn(); refresh(); } catch (e) { $(out).innerHTML = `<p class="err">${esc(e.message)}</p>`; }
+  try { await fn(); refresh(); } catch (e) { $(out).innerHTML = errBox(e.message); }
   $(btn).disabled = false;
 }
 async function refresh() { cases = await api("/api/cases"); drawList(); const c = await api(`/api/cases/${current}`); showAudit(c.audit); }
@@ -312,7 +359,7 @@ function showDrafts(d, c) {
     <h4>Letter to the customer</h4>${d.customer_letter ? `<div class="tabs" id="tl"><button data-k="customer_letter">${esc(c.language)}</button><button class="ghost" data-k="customer_letter_english">English</button></div><div class="doc" id="letter"></div>`
       : `<div class="banner bad"><b>No customer notice.</b> Strong mule indicators: telling the holder could tip off a launderer, which is an offence. Internal memo only.</div>`}
     <p class="small muted">Rules cited: ${d.citations_used.map(esc).join(", ")}</p>
-    <div class="row" style="justify-content:flex-start;gap:8px"><input type="text" id="officer" value="Duty officer" aria-label="Officer name"><button id="approve">${c.decision ? "Approved" : "Approve and sign"}</button></div><div id="dec"></div>`;
+    <div class="actions"><input type="text" id="officer" value="Duty officer" aria-label="Officer name"><button id="approve">${c.decision ? "Approved" : "Approve and sign"}</button></div><div id="dec"></div>`;
   const tabs = (sel, box) => { const set = k => { $(box).textContent = d[k]; document.querySelectorAll(`${sel} button`).forEach(b => b.className = b.dataset.k === k ? "" : "ghost"); };
     document.querySelectorAll(`${sel} button`).forEach(b => b.onclick = () => set(b.dataset.k)); set($(`${sel} button`).dataset.k); };
   tabs("#tm", "#memo"); if (d.customer_letter) tabs("#tl", "#letter");
@@ -320,7 +367,7 @@ function showDrafts(d, c) {
   $("#approve").onclick = async () => {
     try { const r = await api(`/api/cases/${c.id}/approve`, {method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify({officer: $("#officer").value})});
       $("#dec").innerHTML = `<div class="banner ok">Signed by ${esc(r.officer)} at ${esc(r.at)}. Lien instruction sent to core banking (demo), memo queued to ${esc(c.rules.release_authority)}.</div>`;
-      $("#approve").disabled = true; $("#approve").textContent = "Approved"; refresh(); } catch (e) { $("#dec").innerHTML = `<p class="err">${esc(e.message)}</p>`; }
+      $("#approve").disabled = true; $("#approve").textContent = "Approved"; refresh(); } catch (e) { $("#dec").innerHTML = errBox(e.message); }
   };
 }
 function showAudit(rows) {
@@ -330,25 +377,28 @@ function showAudit(rows) {
 /* ---------------- regulator view ---------------- */
 async function regulatorPage() {
   const rows = await api("/api/regulator");
-  const fair = rows.filter(r => r.requested_hold >= r.disputed), req = fair.reduce((s, r) => s + r.index_requested, 0) / fair.length, ff = fair.reduce((s, r) => s + r.index_fairfreeze, 0) / fair.length;
+  const fair = rows.filter(r => r.requested_hold >= r.disputed), avg = k => fair.length ? fair.reduce((s, r) => s + r[k], 0) / fair.length : 0;
+  const req = avg("index_requested"), ff = avg("index_fairfreeze");
   $("#app").innerHTML = `<main style="grid-template-columns:1fr"><section><div class="card"><h1>Regulator view: proportionality across banks</h1>
     <p class="muted">The Proportionality Index is money held divided by money provably disputed. 1.0 is fair. Regulators can rank banks by it and see innocent customers freed faster.</p>
     <div class="grid"><div class="stat bad"><div class="v">${req.toFixed(1)}x</div><div class="l">Average index if whole accounts are frozen</div></div>
     <div class="stat ok"><div class="v">${ff.toFixed(2)}x</div><div class="l">Average index with FairFreeze</div></div>
     <div class="stat"><div class="v">${rows.length}</div><div class="l">Inbound freeze cases in this demo</div></div></div></div>
-    <div class="card"><table><tr><th>Case</th><th>Country</th><th>Bank</th><th>Disputed</th><th>Whole-account hold</th><th>FairFreeze hold</th><th>Index before → after</th><th>Status</th></tr>
-    ${rows.map(r => `<tr><td>${esc(r.id)}</td><td>${r.country}</td><td>${esc(r.bank)}</td><td>${r.disputed.toLocaleString()}</td><td>${r.requested_hold.toLocaleString()}</td><td>${r.fairfreeze_hold.toLocaleString()}</td>
-      <td><b>${r.requested_hold < r.disputed ? "money already moved on" : `${r.index_requested}x → ${r.index_fairfreeze}x`}</b></td><td><span class="pill">${esc(r.status)}</span></td></tr>`).join("")}</table>
+    <div class="card"><div class="scroll"><table style="min-width:720px"><tr><th>Case</th><th>Country</th><th>Bank</th><th>Disputed</th><th>Whole-account hold</th><th>FairFreeze hold</th><th>Index before → after</th><th>Status</th></tr>
+    ${rows.map(r => `<tr><td>${esc(r.id)}</td><td>${r.country}</td><td>${esc(r.bank)}</td><td>${money(r.disputed, r.currency)}</td><td>${money(r.requested_hold, r.currency)}</td><td>${money(r.fairfreeze_hold, r.currency)}</td>
+      <td><b>${r.requested_hold < r.disputed ? "money already moved on" : `${r.index_requested}x → ${r.index_fairfreeze}x`}</b></td><td><span class="pill">${esc(r.status)}</span></td></tr>`).join("")}</table></div>
     <p class="small muted">An index above 1.0 after FairFreeze means the officer kept a wider hold on purpose, for example a likely mule account, and the reason is in the audit trail.</p></div></section></main>`;
 }
 
 document.querySelectorAll("#nav button").forEach(b => b.onclick = async () => {
-  if (b.dataset.v === "reset") { if (!confirm("Put all demo cases back to New?")) return; await api("/api/reset", {method: "POST"}); current = null; b.blur(); return consolePage(); }
+  if (b.dataset.v === "reset") { b.blur(); if (!await confirmDialog("Reset the demo?", "Every demo case goes back to New. Drafts and approvals are cleared.", "Reset demo")) return; const r = await api("/api/reset", {method: "POST"}); current = null; b.blur(); await consolePage();
+    if (r.skipped.length) $("#app").insertAdjacentHTML("afterbegin", `<div style="max-width:1400px;margin:0 auto;padding:12px 22px 0"><div class="banner warn" style="margin:0">Not reset: ${r.skipped.map(esc).join(", ")}. The Case Agent is still working on ${r.skipped.length > 1 ? "these cases" : "this case"}; reset again when it finishes.</div></div>`);
+    return; }
   document.querySelectorAll("#nav button").forEach(x => x.classList.toggle("on", x === b));
-  (b.dataset.v === "console" ? consolePage : regulatorPage)().catch(e => $("#app").innerHTML = `<p class="err" style="padding:20px">${esc(e.message)}</p>`);
+  (b.dataset.v === "console" ? consolePage : regulatorPage)().catch(e => $("#app").innerHTML = `<div style="padding:20px">${errBox(e.message)}</div>`);
 });
 const m = location.pathname.match(/^\/c\/([\w-]+)/);
-(m ? customerPage(m[1]) : consolePage()).catch(e => $("#app").innerHTML = `<p class="err" style="padding:20px">${esc(e.message)}</p>`);
+(m ? customerPage(m[1]) : consolePage()).catch(e => $("#app").innerHTML = `<div style="padding:20px">${errBox(e.message)}</div>`);
 </script>
 </body>
 </html>
