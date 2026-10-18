@@ -146,7 +146,7 @@ async def ask(parts, schema, system, models=READ):
                                       response_mime_type="application/json", response_schema=schema)
     for model in models:
         try:
-            r = await client.aio.models.generate_content(model=model, contents=parts, config=cfg)
+            r = await asyncio.wait_for(client.aio.models.generate_content(model=model, contents=parts, config=cfg), 60)
             if r.parsed is not None:
                 return r.parsed
             print(f"gemini {model}: no structured result", flush=True)
@@ -319,8 +319,9 @@ async def run_agent(cid, c, st):
         "that apply. You recommend; a human officer decides. Plain English, no em-dashes.")
     for model in REASON:
         try:
-            r = await asyncio.to_thread(client.models.generate_content, model=model, config=cfg,
-                                        contents=f"Investigate case {cid} and assess it.")
+            # cap each model's whole investigation; a busy model must not leave the officer waiting
+            r = await asyncio.wait_for(asyncio.to_thread(client.models.generate_content, model=model, config=cfg,
+                                                         contents=f"Investigate case {cid} and assess it."), 75)
             steps = [{"tool": p.function_call.name, "args": dict(p.function_call.args or {})}
                      for h in (r.automatic_function_calling_history or []) for p in (h.parts or []) if p.function_call]
             return {"model": model, "steps": steps, "assessment": r.text or ""}
