@@ -3,7 +3,7 @@
 <p align="center"><b>Hold the right money. Free the innocent.</b><br>
 Team FinMasters · Google Cloud AI Builder Cup 2026 · BFSI: Intelligent Risk, Fraud & Financial Experiences</p>
 
-<p align="center"><a href="https://fairfreeze.web.app">Live prototype</a> · <a href="https://fairfreeze.vercel.app">Project site and demo video</a></p>
+<p align="center"><a href="https://fairfreeze.web.app">Live prototype</a> · <a href="https://fairfreeze.appcloudpro.com">Project site and demo video</a></p>
 
 ![Officer console](docs/img/console.png)
 
