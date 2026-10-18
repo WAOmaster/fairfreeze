@@ -67,7 +67,7 @@ python engine.py
 uvicorn main:app --port 8080
 ```
 
-Set `GOOGLE_GENAI_USE_VERTEXAI=true`, `GOOGLE_CLOUD_PROJECT` and `GOOGLE_CLOUD_LOCATION=global` (or `GEMINI_API_KEY`). Set `FIRESTORE=off` to keep state in memory.
+Set `GOOGLE_GENAI_USE_VERTEXAI=true`, `GOOGLE_CLOUD_PROJECT` and `GOOGLE_CLOUD_LOCATION=global` (or `GEMINI_API_KEY`). Set `FIRESTORE=off` to keep state in memory. Set `LINK_SECRET` to sign customer links; without it the demo links stay open.
 
 ## Team FinMasters
 
