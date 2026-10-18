@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FairFreeze · Free the innocent</title>
+<link rel="icon" href="img/logo.svg" type="image/svg+xml">
+<meta name="description" content="FairFreeze runs everything after a bank freezes an account for suspected scam money: hold the right money, free the innocent, return it to victims. Team FinMasters, Google Cloud AI Builder Cup 2026.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#0b1430;--ink2:#14214a;--line:#2a3c74;--blue:#0b5fff;--sky:#7fb0ff;--ok:#19c37d;--bad:#ff5a4e;--warn:#ffc35a;--mute:#9fb2dd;--text:#e8eefc}
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;background:var(--ink);color:var(--text);font:17px/1.6 Inter,'Segoe UI',system-ui,sans-serif;overflow-x:hidden}
+a{color:var(--sky)}a:focus-visible,button:focus-visible{outline:3px solid var(--sky);outline-offset:3px}
+.wrap{max-width:1120px;margin:0 auto;padding:0 20px}
+nav{position:fixed;top:0;left:0;right:0;z-index:10;background:rgba(11,20,48,.75);backdrop-filter:blur(10px);border-bottom:1px solid rgba(42,60,116,.6)}
+nav .wrap{display:flex;align-items:center;gap:20px;height:60px}.brand{font-weight:800;font-size:20px;color:#fff;text-decoration:none}.brand span{color:var(--sky)}
+nav .links{margin-left:auto;display:flex;gap:18px;font-size:15px}nav .links a{color:var(--text);text-decoration:none}
+.btn{display:inline-block;background:var(--blue);color:#fff;text-decoration:none;font-weight:600;padding:12px 20px;border-radius:10px}.btn.ghost{background:transparent;border:1px solid var(--line);color:var(--text)}
+@media(max-width:700px){nav .links a:not(.btn){display:none}}
+section{padding:110px 0}
+.hero{min-height:100vh;display:flex;align-items:center;padding-top:90px;position:relative}
+.hero h1{font-size:clamp(40px,7vw,84px);line-height:1.02;margin:0 0 20px;font-weight:800;letter-spacing:-1.5px}
+.hero h1 em{font-style:normal;background:linear-gradient(90deg,var(--sky),var(--ok));-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero p{font-size:clamp(18px,2.2vw,22px);color:var(--mute);max-width:640px}
+.hero .cta{display:flex;gap:12px;flex-wrap:wrap;margin-top:28px}
+.hgrid{display:grid;grid-template-columns:1.15fr .85fr;gap:40px;align-items:center}@media(max-width:900px){.hgrid{grid-template-columns:1fr}}
+.acct{position:relative;border-radius:24px;background:var(--ink2);border:1px solid var(--line);padding:30px;overflow:hidden;min-height:300px}
+.acct .l{color:var(--mute);font-size:15px}.acct .v{font-size:clamp(38px,5vw,56px);font-weight:800}.acct .d{color:var(--warn);font-weight:600}
+.acct .rows{margin-top:18px;display:grid;gap:10px}.acct .r{display:flex;justify-content:space-between;background:rgba(255,255,255,.04);border-radius:10px;padding:10px 14px;font-size:15px}
+.ice{position:absolute;inset:0;background:linear-gradient(135deg,rgba(191,227,255,.85),rgba(127,176,255,.55));display:grid;place-items:center;color:var(--ink);font-weight:800;font-size:26px;letter-spacing:3px;animation:ice 8s infinite}
+@keyframes ice{0%,10%{opacity:0;clip-path:inset(0 0 100% 0)}20%,45%{opacity:1;clip-path:inset(0 0 0 0)}60%,100%{opacity:0;clip-path:inset(0 0 0 100%)}}
+.acct .held{position:absolute;right:18px;bottom:18px;background:var(--bad);color:#fff;border-radius:8px;padding:6px 12px;font-weight:700;font-size:14px;animation:held 8s infinite}
+@keyframes held{0%,55%{opacity:0;transform:translateY(10px)}65%,95%{opacity:1;transform:none}100%{opacity:0}}
+.acct .free{position:absolute;left:18px;bottom:18px;background:var(--ok);color:var(--ink);border-radius:8px;padding:6px 12px;font-weight:700;font-size:14px;animation:held 8s infinite}
+.kicker{color:var(--sky);font-weight:700;letter-spacing:2px;text-transform:uppercase;font-size:13px}
+h2{font-size:clamp(30px,4.4vw,50px);line-height:1.1;margin:10px 0 18px;letter-spacing:-.8px}
+.lead{color:var(--mute);font-size:20px;max-width:760px}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin-top:36px}
+.card{background:var(--ink2);border:1px solid var(--line);border-radius:18px;padding:22px}
+.card b{display:block;font-size:22px;color:#fff}.card .n{font-size:40px;font-weight:800;color:var(--sky);line-height:1.1}
+.card p{margin:8px 0 0;color:var(--mute);font-size:15px}
+.reveal{opacity:0;transform:translateY(40px);transition:opacity .8s ease,transform .8s ease}.reveal.on{opacity:1;transform:none}
+.steps{display:grid;gap:14px;margin-top:40px;counter-reset:s}
+.step{display:grid;grid-template-columns:64px 1fr auto;gap:18px;align-items:center;background:var(--ink2);border:1px solid var(--line);border-radius:16px;padding:18px 22px}
+.step .i{width:52px;height:52px;border-radius:50%;display:grid;place-items:center;background:var(--blue);font-weight:800;font-size:20px}
+.step b{font-size:19px;color:#fff}.step p{margin:2px 0 0;color:var(--mute);font-size:15px}
+.tagm{font-size:12px;font-weight:700;border-radius:999px;padding:4px 10px;white-space:nowrap}.t-ai{background:#1d3a8a;color:#cfe0ff}.t-ag{background:#fff;color:var(--ink)}.t-det{background:#0f4b37;color:#b8f0d6}.t-h{background:#4b3a0f;color:#ffe3a3}
+@media(max-width:640px){.step{grid-template-columns:52px 1fr}.step .tagm{grid-column:2}}
+.index{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:40px}@media(max-width:760px){.index{grid-template-columns:1fr}}
+.meter{background:var(--ink2);border:1px solid var(--line);border-radius:20px;padding:28px}
+.meter .big{font-size:clamp(56px,9vw,96px);font-weight:800;line-height:1}.meter.bad .big{color:var(--bad)}.meter.ok .big{color:var(--ok)}
+.bar{height:16px;border-radius:8px;background:rgba(255,255,255,.07);margin-top:18px;overflow:hidden}.bar i{display:block;height:100%;width:0;border-radius:8px;transition:width 1.6s cubic-bezier(.2,.8,.2,1)}
+.meter.bad .bar i{background:var(--bad)}.meter.ok .bar i{background:var(--ok)}
+.stories{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:18px;margin-top:40px}
+.story{background:var(--ink2);border:1px solid var(--line);border-radius:20px;overflow:hidden;display:flex;flex-direction:column}
+.story .top{padding:20px 22px}.story .flag{font-size:13px;font-weight:700;color:var(--sky);letter-spacing:1px}
+.story h3{margin:6px 0 6px;font-size:22px;color:#fff}.story p{margin:0;color:var(--mute);font-size:15px}
+.story .res{margin-top:auto;padding:14px 22px;font-weight:600;font-size:15px}.res.ok{background:#0f4b37;color:#b8f0d6}.res.bad{background:#5a1712;color:#ffc9c4}.res.vic{background:#2f1d5e;color:#dccbff}
+.shot{border-radius:18px;border:1px solid var(--line);width:100%;display:block;margin-top:34px;box-shadow:0 30px 80px rgba(0,0,0,.45)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:20px}@media(max-width:800px){.two{grid-template-columns:1fr}}
+.stack{display:flex;flex-wrap:wrap;gap:10px;margin-top:24px}.stack span{background:var(--ink2);border:1px solid var(--line);border-radius:999px;padding:8px 14px;font-size:15px}
+footer{padding:60px 0;border-top:1px solid var(--line);color:var(--mute);font-size:15px}
+.final{text-align:center}.final h2{font-size:clamp(34px,6vw,64px)}.final .l1{color:#fff}.final .l2{color:var(--sky)}.final .l3{color:var(--ok)}
+
+.video{margin-top:30px;border-radius:20px;overflow:hidden;border:1px solid var(--line);box-shadow:0 30px 80px rgba(0,0,0,.45);background:#000}
+.video video{display:block;width:100%;height:auto}
+.try{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin-top:30px}
+.try .card{position:relative;padding-top:56px}.try .num{position:absolute;top:18px;left:22px;width:28px;height:28px;border-radius:50%;background:var(--ok);color:var(--ink);font-weight:800;display:grid;place-items:center}
+.try a{font-weight:600}
+.team{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-top:30px}
+.team .card b{font-size:19px}.avatar{width:54px;height:54px;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:20px;color:var(--ink);margin-bottom:12px}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.reveal{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+<nav><div class="wrap"><a class="brand" href="#top"><img src="img/logo.svg" alt="" width="30" height="30" style="vertical-align:-8px;margin-right:8px">Fair<span>Freeze</span></a>
+  <div class="links"><a href="#demo">Demo</a><a href="#try">Try it</a><a href="#how">How it works</a><a href="#team">Team</a>
+  <a class="btn" href="https://fairfreeze.web.app" target="_blank" rel="noopener">Try the live demo</a></div></div></nav>
+
+<header class="hero" id="top"><div class="wrap hgrid">
+  <div>
+    <div class="kicker">Google Cloud AI Builder Cup 2026 · Team FinMasters</div>
+    <h1>Hold the right money.<br><em>Free the innocent.</em></h1>
+    <p>Across Asia Pacific, banks are told to freeze scam money faster. FairFreeze runs everything after the freeze: it holds only the disputed money, clears innocent customers in hours, stops mules faking innocence, and drafts every letter in the customer's language.</p>
+    <div class="cta"><a class="btn" href="https://fairfreeze.web.app" target="_blank" rel="noopener">Open the live prototype</a><a class="btn ghost" href="https://github.com/WAOmaster/fairfreeze" target="_blank" rel="noopener">GitHub</a></div>
+  </div>
+  <div class="acct" aria-label="Animated example: a whole account frozen, then only the disputed amount held">
+    <div class="l">Ravi's account, Pune</div><div class="v">INR 84,000</div><div class="d">Disputed payment: INR 3,600</div>
+    <div class="rows"><div class="r"><span>Salary</span><span>+62,000</span></div><div class="r"><span>UPI from buyer (phone sale)</span><span>+3,600</span></div><div class="r"><span>Rent, groceries, pharmacy</span><span>-22,670</span></div></div>
+    <div class="ice">WHOLE ACCOUNT FROZEN</div><div class="free">Release 80,400 now</div><div class="held">Hold 3,600</div>
+  </div>
+</div></header>
+
+
+<section id="demo" style="padding-top:40px"><div class="wrap">
+  <div class="reveal"><div class="kicker">Watch first</div><h2>The 3-minute demo</h2>
+  <p class="lead">One officer, four cases, three countries. Everything you see is the working prototype on Google Cloud.</p></div>
+  <div class="video reveal"><video controls preload="metadata" poster="img/console.png"><source src="media/fairfreeze-demo.mp4" type="video/mp4">Your browser cannot play this video.</video></div>
+</div></section>
+
+<section id="try" style="padding-top:40px"><div class="wrap">
+  <div class="reveal"><div class="kicker">Try it yourself</div><h2>Two minutes, no sign-in.</h2>
+  <p class="lead">The demo bank is loaded with four synthetic cases. Ravi's is left untouched so you can run every step.</p></div>
+  <div class="try">
+    <div class="card reveal"><span class="num">1</span><b>Run Ravi's case</b><p>Open the <a href="https://fairfreeze.web.app" target="_blank" rel="noopener">officer console</a>. Press step 1, then "Use the sample evidence", then "Run the Case Agent" and watch it work.</p></div>
+    <div class="card reveal"><span class="num">2</span><b>See a mule get caught</b><p>Click Vikram. His documents pass every check, yet his chat matches 14 cases at 3 banks. Notice there is no customer letter.</p></div>
+    <div class="card reveal"><span class="num">3</span><b>Be the customer</b><p>Open <a href="https://fairfreeze.web.app/c/IN-2026-0411" target="_blank" rel="noopener">Ravi's link</a> in Hindi, or <a href="https://fairfreeze.web.app/c/TH-2026-1520" target="_blank" rel="noopener">Nok's in Thai</a>, on your phone.</p></div>
+    <div class="card reveal"><span class="num">4</span><b>Think like a regulator</b><p>Open Regulator view at the top of the console and compare the Proportionality Index before and after.</p></div>
+  </div>
+</div></section>
+
+<section id="problem"><div class="wrap">
+  <div class="reveal"><div class="kicker">The problem</div><h2>A freeze is a blunt tool.<br>Nobody built the tool to free the innocent.</h2>
+  <p class="lead">Fraud engines find mules and trigger freezes. What happens next is manual, slow and often wrong: whole accounts locked over small amounts, sellers who did nothing wrong stuck for weeks, victims waiting for money that sits in someone else's account.</p></div>
+  <div class="cards">
+    <div class="card reveal"><div class="n">Lakhs</div><b>India</b><p>of savers stuck behind frozen accounts; courts now tell banks to hold only the disputed amount.</p></div>
+    <div class="card reveal"><div class="n">~200,000</div><b>Thailand</b><p>accounts frozen in 13 months; innocent customers must be released within hours of verification.</p></div>
+    <div class="card reveal"><div class="n">30 days</div><b>Singapore</b><p>restriction orders on likely scam victims, renewable; daily living money must stay available.</p></div>
+    <div class="card reveal"><div class="n">12 Mar 2026</div><b>Australia</b><p>AFCA can now hear complaints against receiving banks about scam money.</p></div>
+  </div>
+</div></section>
+
+<section id="how"><div class="wrap">
+  <div class="reveal"><div class="kicker">How it works</div><h2>One case, seven steps.<br>A human signs the last one.</h2>
+  <p class="lead">Gemini reads and reasons. Deterministic code does every number. A bank officer decides.</p></div>
+  <div class="steps">
+    <div class="step reveal"><div class="i">1</div><div><b>Read the freeze request</b><p>Police notice, court order, AOC or restriction order, in any language and format.</p></div><span class="tagm t-ai">Gemini 3.5 Flash Lite</span></div>
+    <div class="step reveal"><div class="i">2</div><div><b>Verify it and catch over-freezes</b><p>Account, holder, transaction, amount and legal basis against the bank's own record and the country rule pack.</p></div><span class="tagm t-det">Deterministic</span></div>
+    <div class="step reveal"><div class="i">3</div><div><b>Trace the money</b><p>The lowest-intermediate-balance rule shows what is provably the victim's money: hold that, release the rest, find the next hops.</p></div><span class="tagm t-det">Deterministic</span></div>
+    <div class="step reveal"><div class="i">4</div><div><b>Hear the customer's side</b><p>A secure link in Hindi, Thai, Mandarin or English shows what is held and what is free, and collects the sale chat and receipts.</p></div><span class="tagm t-ai">Gemini multimodal</span></div>
+    <div class="step reveal"><div class="i">5</div><div><b>Check the evidence</b><p>Cross-checks with the bank record, behaviour signals, and reuse detection across other banks' cases.</p></div><span class="tagm t-det">Deterministic</span></div>
+    <div class="step reveal"><div class="i">6</div><div><b>Case Agent investigates and drafts</b><p>Gemini 4 Argon chooses its own tool calls, writes the assessment, the police memo and the customer letter with rule citations.</p></div><span class="tagm t-ag">Gemini 4 Argon</span></div>
+    <div class="step reveal"><div class="i">7</div><div><b>Officer signs</b><p>Decision, audit trail in Firestore, and the regulator's Proportionality Index.</p></div><span class="tagm t-h">Human</span></div>
+  </div>
+</div></section>
+
+<section id="index"><div class="wrap">
+  <div class="reveal"><div class="kicker">The Proportionality Index</div><h2>Money held ÷ money provably disputed.<br>1.0 is fair.</h2>
+  <p class="lead">A number every regulator can rank banks by. In Ravi's case:</p></div>
+  <div class="index">
+    <div class="meter bad reveal"><div class="big" data-count="23.3">0x</div><p>Whole-account freeze: INR 84,000 held for an INR 3,600 dispute.</p><div class="bar"><i data-w="100"></i></div></div>
+    <div class="meter ok reveal"><div class="big" data-count="1.0">0x</div><p>With FairFreeze: hold INR 3,600, release INR 80,400 the same day.</p><div class="bar"><i data-w="4.3"></i></div></div>
+  </div>
+</div></section>
+
+<section id="stories"><div class="wrap">
+  <div class="reveal"><div class="kicker">Four stories, one engine</div><h2>A rule pack per country.</h2></div>
+  <div class="stories">
+    <div class="story reveal"><div class="top"><div class="flag">INDIA</div><h3>Ravi sold a phone</h3><p>INR 3,600 from a buyer whose money came from a scam. Police asked for a whole-account freeze.</p></div><div class="res ok">Over-freeze caught. Hold 3,600, release 80,400. Letter in Hindi.</div></div>
+    <div class="story reveal"><div class="top"><div class="flag">THAILAND</div><h3>Nok runs a LINE shop</h3><p>One THB 1,250 payment disputed. Thai notice read straight from the document.</p></div><div class="res ok">Hold 1,250, release 5,480. Memo and letter in Thai.</div></div>
+    <div class="story reveal"><div class="top"><div class="flag">INDIA</div><h3>Vikram's perfect documents</h3><p>His chat and dates all match. But the same script appears 14 times at 3 banks, and the money left in 16 minutes.</p></div><div class="res bad">Red flag. Full hold, next hops to police, no customer notice.</div></div>
+    <div class="story reveal"><div class="top"><div class="flag">SINGAPORE</div><h3>Mrs Tan is the victim</h3><p>72, under a restriction order while an "investment mentor" asks for SGD 60,000.</p></div><div class="res vic">Living money kept open (SGD 1,100 a month). Scam explained kindly in Mandarin.</div></div>
+  </div>
+</div></section>
+
+<section id="see"><div class="wrap">
+  <div class="reveal"><div class="kicker">The prototype</div><h2>Working on Google Cloud today.</h2></div>
+  <img class="shot reveal" src="img/console.png" alt="FairFreeze officer console showing Ravi's case with the Proportionality Index" loading="lazy">
+  <div class="two">
+    <img class="shot reveal" src="img/mule_evidence.png" alt="Evidence check flagging a chat script reused 14 times at 3 banks" loading="lazy">
+    <img class="shot reveal" src="img/regulator.png" alt="Regulator view with the Proportionality Index per case" loading="lazy">
+  </div>
+</div></section>
+
+<section id="tech"><div class="wrap">
+  <div class="reveal"><div class="kicker">Technology</div><h2>The right model for each job.</h2>
+  <p class="lead">Cheap, fast models where the task is reading. The strongest reasoning model where judgement is needed. No model at all where the answer must be exact.</p></div>
+  <img class="shot reveal" src="img/architecture.png" alt="FairFreeze architecture on Google Cloud" loading="lazy">
+  <div class="stack reveal"><span>Gemini 4 Argon</span><span>Gemini 3.5 Flash Lite</span><span>Vertex AI</span><span>Cloud Run</span><span>Cloud Firestore</span><span>Firebase Hosting</span><span>FastAPI</span><span>Python</span></div>
+</div></section>
+
+
+<section id="team"><div class="wrap">
+  <div class="reveal"><div class="kicker">Team FinMasters</div><h2>Built by people who work in banking.</h2>
+  <p class="lead">We see frozen-account complaints from the inside. FairFreeze is the tool we wished our banks had.</p></div>
+  <div class="team">
+    <div class="card reveal"><div class="avatar" style="background:var(--sky)">SP</div><b>Sashi Perera</b><p>Product, business analysis and cloud</p></div>
+    <div class="card reveal"><div class="avatar" style="background:var(--ok)">AA</div><b>Ashan Abeysekera</b><p>Business analysis</p></div>
+    <div class="card reveal"><div class="avatar" style="background:var(--warn)">SL</div><b>Shehan Lakshitha</b><p>Development</p></div>
+    <div class="card reveal"><div class="avatar" style="background:#c3a8f5">AS</div><b>Akila Samarakoon</b><p>Quality assurance</p></div>
+  </div>
+</div></section>
+
+<section class="final"><div class="wrap reveal">
+  <h2><span class="l1">Hold the right money.</span><br><span class="l2">Free the innocent.</span><br></h2>
+  <div class="cta" style="justify-content:center;display:flex;gap:12px;flex-wrap:wrap;margin-top:24px"><a class="btn" href="https://fairfreeze.web.app" target="_blank" rel="noopener">Open the live prototype</a><a class="btn ghost" href="https://github.com/WAOmaster/fairfreeze" target="_blank" rel="noopener">Source on GitHub</a></div>
+</div></section>
+
+<footer><div class="wrap">FairFreeze by Team FinMasters: Sashi Perera, Ashan Abeysekera, Shehan Lakshitha, Akila Samarakoon. Built for the Google Cloud AI Builder Cup 2026. All demo data is synthetic; every person, bank and account in the prototype is fictional.</div></footer>
+
+<script>
+const io = new IntersectionObserver(es => es.forEach(e => {
+  if (!e.isIntersecting) return;
+  e.target.classList.add("on");
+  e.target.querySelectorAll("[data-count]").forEach(el => {
+    const end = +el.dataset.count, t0 = performance.now();
+    const tick = t => { const k = Math.min(1, (t - t0) / 1600); el.textContent = (end * (1 - Math.pow(1 - k, 3))).toFixed(1) + "x"; if (k < 1) requestAnimationFrame(tick); };
+    requestAnimationFrame(tick);
+  });
+  e.target.querySelectorAll("[data-w]").forEach(el => el.style.width = el.dataset.w + "%");
+  io.unobserve(e.target);
+}), {threshold: .2});
+document.querySelectorAll(".reveal").forEach(el => io.observe(el));
+</script>
+</body>
+</html>
