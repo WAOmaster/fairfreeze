@@ -1,0 +1,316 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FairFreeze</title>
+<link rel="icon" href="/logo.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f4f6f9;--card:#fff;--ink:#14213d;--muted:#5b6575;--line:#e2e6ec;--brand:#0b5fff;--brand-ink:#fff;
+--ok:#0a7a4f;--ok-bg:#e6f6ef;--warn:#9a5b00;--warn-bg:#fff4e0;--bad:#b42318;--bad-bg:#fdecea;--soft:#eef3ff}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 Inter,'Segoe UI','Nirmala UI','Leelawadee UI','Microsoft YaHei',system-ui,sans-serif}
+button{font:inherit;cursor:pointer;border:0;border-radius:8px;padding:9px 14px;background:var(--brand);color:var(--brand-ink);font-weight:600}
+button.ghost{background:var(--soft);color:var(--brand)}button:disabled{opacity:.55;cursor:wait}
+button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid #8db4ff;outline-offset:2px}
+header{background:var(--ink);color:#fff;padding:12px 22px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.logo{font-weight:700;font-size:20px;letter-spacing:.2px}.logo span{color:#7fb0ff}.tag{color:#c7d2e6;font-size:13px}
+.guide{background:linear-gradient(135deg,#eef3ff,#e6f6ef);border-color:#cfe0ff}.guide ol{margin:6px 0 0;padding-left:20px}.guide li{margin:4px 0}.guide .row button{padding:4px 10px;font-size:13px}
+nav{margin-left:auto;display:flex;gap:6px}nav button{background:transparent;color:#c7d2e6}nav button.on{background:#24365e;color:#fff}
+main{display:grid;grid-template-columns:300px 1fr;gap:18px;padding:18px 22px;max-width:1400px;margin:0 auto}
+@media(max-width:900px){main{grid-template-columns:1fr;padding:12px 16px}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin-bottom:14px}
+.inbox h3{margin:0 0 10px;font-size:13px;text-transform:uppercase;color:var(--muted);letter-spacing:.6px}
+.item{display:block;width:100%;text-align:left;background:#fff;color:var(--ink);border:1px solid var(--line);margin-bottom:8px;padding:10px 12px;font-weight:400}
+.item.on{border-color:var(--brand);box-shadow:0 0 0 2px #cfe0ff}.item b{display:block}.row{display:flex;justify-content:space-between;gap:8px;align-items:center}
+.cc{font-size:11px;font-weight:700;background:var(--soft);color:var(--brand);border-radius:5px;padding:1px 6px}
+.pill{font-size:12px;border-radius:99px;padding:2px 9px;background:#eef0f4;color:var(--muted);white-space:nowrap}
+.clock{font-variant-numeric:tabular-nums;font-size:12px;color:var(--muted)}.clock.urgent{color:var(--bad);font-weight:600}
+h1{font-size:22px;margin:0}h2{font-size:16px;margin:0 0 10px;display:flex;gap:10px;align-items:center}
+.n{display:inline-grid;place-items:center;width:24px;height:24px;border-radius:50%;background:var(--ink);color:#fff;font-size:13px}
+.muted{color:var(--muted)}.small{font-size:13px}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px}
+.stat{background:var(--bg);border-radius:10px;padding:10px 12px}.stat .v{font-size:22px;font-weight:700}.stat .l{font-size:12px;color:var(--muted)}
+.stat.ok{background:var(--ok-bg)}.stat.ok .v{color:var(--ok)}.stat.bad{background:var(--bad-bg)}.stat.bad .v{color:var(--bad)}
+.checks{list-style:none;padding:0;margin:8px 0}.checks li{display:flex;gap:9px;padding:6px 0;border-bottom:1px solid var(--line)}
+.checks .i{flex:0 0 22px;height:22px;border-radius:50%;display:grid;place-items:center;font-size:13px;font-weight:700}
+.i.y{background:var(--ok-bg);color:var(--ok)}.i.x{background:var(--bad-bg);color:var(--bad)}.i.w{background:var(--warn-bg);color:var(--warn)}
+.banner{border-radius:10px;padding:12px 14px;margin:10px 0}.banner.bad{background:var(--bad-bg);color:var(--bad)}
+.banner.warn{background:var(--warn-bg);color:var(--warn)}.banner.ok{background:var(--ok-bg);color:var(--ok)}.banner.info{background:var(--soft);color:#173a8a}
+table{border-collapse:collapse;width:100%;font-size:14px}td,th{text-align:left;padding:6px 8px;border-bottom:1px solid var(--line);vertical-align:top}th{color:var(--muted);font-weight:600;font-size:12px}
+.badge{font-weight:700;border-radius:8px;padding:3px 10px;font-size:13px}.strong{background:var(--ok-bg);color:var(--ok)}.moderate{background:var(--soft);color:#173a8a}
+.weak{background:var(--warn-bg);color:var(--warn)}.red_flag{background:var(--bad-bg);color:var(--bad)}.victim{background:#f2ecff;color:#5b2bb5}
+.steps{list-style:none;padding:0;margin:8px 0;display:flex;flex-wrap:wrap;gap:6px}.steps li{background:var(--soft);color:#173a8a;border-radius:6px;padding:3px 8px;font-size:12px;font-family:Consolas,monospace;animation:pop .3s both}
+@keyframes pop{from{opacity:0;transform:translateY(4px)}}
+.doc{white-space:pre-wrap;background:var(--bg);border-radius:10px;padding:12px 14px;font-size:14px;max-height:340px;overflow:auto}
+.tabs{display:flex;gap:6px;margin:8px 0}.tabs button{padding:5px 10px;font-size:13px}
+.thumbs{display:flex;gap:8px;flex-wrap:wrap}.thumbs a img{height:110px;border:1px solid var(--line);border-radius:8px}
+.md h3,.md h4{margin:10px 0 4px;font-size:15px}.md p{margin:6px 0}.md ul{margin:4px 0;padding-left:20px}
+.spin{display:inline-block;width:14px;height:14px;border:2px solid #cfe0ff;border-top-color:var(--brand);border-radius:50%;animation:r 1s linear infinite;vertical-align:-2px;margin-right:6px}@keyframes r{to{transform:rotate(360deg)}}
+.hidden{display:none}.err{color:var(--bad)}svg text{font-family:inherit}
+.cust{max-width:520px;margin:0 auto;padding:16px}.cust .big{font-size:28px;font-weight:700}
+input[type=text]{font:inherit;padding:8px 10px;border:1px solid var(--line);border-radius:8px}
+</style>
+</head>
+<body>
+<header>
+  <img src="/logo.svg" alt="" width="38" height="38"><div><div class="logo">Fair<span>Freeze</span></div><div class="tag">Hold the right money. Free the innocent. Return it to victims.</div></div>
+  <nav id="nav"><button data-v="console" class="on">Officer console</button><button data-v="regulator">Regulator view</button><button data-v="reset" title="Put all demo cases back to New">Reset demo</button></nav>
+</header>
+<div id="app"></div>
+<script>
+const $ = (s, el = document) => el.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const money = (n, cur) => `${cur} ${Number(n).toLocaleString("en-US", {maximumFractionDigits: 2})}`;
+const LABEL = {strong:"Strong evidence", moderate:"Moderate evidence", weak:"Weak evidence", red_flag:"Red flag: likely mule", victim:"Scam victim"};
+const ACTION = {release_rest_keep_disputed:"Hold only the disputed amount, release the rest now", hold_disputed_request_more:"Hold only the disputed amount, ask for one more document",
+  keep_full_hold_escalate:"Keep full hold, escalate to police, no customer notice", restrict_with_essentials:"Keep the order, keep living money open, block the scammers"};
+async function api(path, opts) {
+  const r = await fetch(path, opts); const j = await r.json().catch(() => ({}));
+  if (!r.ok) throw new Error(j.detail || `Request failed (${r.status})`); return j;
+}
+function md(t) {
+  return esc(t).split(/\n/).map(l => l.replace(/\*\*(.+?)\*\*/g, "<b>$1</b>"))
+    .map(l => /^#{1,4} /.test(l) ? `<h4>${l.replace(/^#+ /, "")}</h4>` : /^\s*[*-] /.test(l) ? `<li>${l.replace(/^\s*[*-] /, "")}</li>` : l.trim() ? `<p>${l}</p>` : "")
+    .join("").replace(/(<li>.*?<\/li>)+/g, m => `<ul>${m}</ul>`);
+}
+function countdown(due) {
+  const s = Math.floor((new Date(due) - new Date()) / 1000);
+  if (s <= 0) return {t: "Deadline passed", urgent: true};
+  const d = Math.floor(s / 86400), h = Math.floor(s % 86400 / 3600), m = Math.floor(s % 3600 / 60), sec = s % 60;
+  return {t: (d ? `${d}d ` : "") + `${h}h ${String(m).padStart(2, "0")}m ${String(sec).padStart(2, "0")}s left`, urgent: s < 6 * 3600};
+}
+setInterval(() => document.querySelectorAll("[data-due]").forEach(el => { const c = countdown(el.dataset.due); el.textContent = c.t; el.classList.toggle("urgent", c.urgent); }), 1000);
+
+/* ---------------- customer link ---------------- */
+const T = {
+  Hindi: {hi:n=>`नमस्ते ${n} जी`, safe:"आपका खाता चालू है। आप बाकी पैसे इस्तेमाल कर सकते हैं।", held:"जाँच के लिए रोकी गई राशि", free:"आप अभी इस्तेमाल कर सकते हैं",
+    why:"पुलिस की शिकायत में एक भुगतान का ज़िक्र है। सिर्फ़ उतनी राशि रोकी गई है, पूरा खाता नहीं।", ask:"अपना पक्ष बताइए: बिक्री की चैट, बिल, कूरियर रसीद या फ़ोटो भेजें।",
+    up:"फ़ाइलें भेजें", sample:"डेमो फ़ाइलें इस्तेमाल करें", done:"धन्यवाद। आपके दस्तावेज़ मिल गए। बैंक अधिकारी जल्द समीक्षा करेंगे।", lang:"English"},
+  Thai: {hi:n=>`สวัสดีค่ะ คุณ${n}`, safe:"บัญชีของคุณยังใช้งานได้ คุณใช้เงินส่วนที่เหลือได้ตามปกติ", held:"ยอดที่ระงับชั่วคราวเพื่อตรวจสอบ", free:"ยอดที่ใช้ได้ทันที",
+    why:"มีรายการรับโอนหนึ่งรายการที่อยู่ในเรื่องร้องเรียน ธนาคารระงับเฉพาะยอดนั้น ไม่ใช่ทั้งบัญชี", ask:"ส่งหลักฐานการขาย: แชทกับลูกค้า ใบเสร็จ เลขพัสดุ หรือรูปสินค้า",
+    up:"ส่งไฟล์", sample:"ใช้ไฟล์ตัวอย่าง (เดโม)", done:"ขอบคุณค่ะ ธนาคารได้รับเอกสารแล้ว เจ้าหน้าที่จะตรวจสอบโดยเร็ว โทร 1441 กด 2 เพื่อยืนยันตัวตน", lang:"English"},
+  Mandarin: {hi:n=>`${n}女士，您好`, safe:"这是为了保护您的储蓄。日常生活费和账单照常可以使用。", allow:"每月可用生活费", keep:"照常支付",
+    why:"警方认为有人正在骗您转账。这不是您的错，骗子非常狡猾。", ask:"如果方便，请把与对方的聊天记录发给我们，我们会帮您看清楚。",
+    up:"发送文件", sample:"使用示例文件（演示）", done:"谢谢您。我们已收到，银行人员会尽快联系您。", lang:"English"},
+  English: {hi:n=>`Hello ${n}`, safe:"Your account is still open. You can use the rest of your money.", held:"Held for review", free:"Free to use now",
+    allow:"Monthly living money", keep:"Still paid as usual",
+    why:"A police complaint mentions one payment. Only that amount is held, not your whole account.", ask:"Tell us your side: send the sale chat, bill, courier slip or photos.",
+    up:"Send files", sample:"Use demo files", done:"Thank you. We have your documents. A bank officer will review them soon.", lang:null}
+};
+async function customerPage(cid) {
+  $("#nav").classList.add("hidden");
+  const p = await api(`/api/public/${cid}`); let lang = p.language;
+  const draw = () => {
+    const t = {...T.English, ...T[lang]}, en = T.English;
+    const sgWhy = lang === "English" && p.kind === "restriction" ? "Police believe someone is trying to scam you. This is not your fault; scammers are very skilled." : t.why;
+    const sgAsk = lang === "English" && p.kind === "restriction" ? "If you can, send us the chat with that person and we will help you see it clearly." : t.ask;
+    $("#app").innerHTML = `<div class="cust"><div class="card">
+      <div class="row"><b>${esc(p.bank)}</b>${lang !== "English" ? `<button class="ghost" id="lg">${t.lang}</button>` : `<button class="ghost" id="lg">${esc(p.language)}</button>`}</div>
+      <h1 style="margin-top:10px">${esc(t.hi(p.first_name))}</h1><p>${t.safe}</p>
+      ${p.kind === "inbound" ? `<div class="grid"><div class="stat ok"><div class="v">${money(p.free, p.currency)}</div><div class="l">${t.free}</div></div>
+        <div class="stat"><div class="v">${money(p.held, p.currency)}</div><div class="l">${t.held}</div></div></div>`
+      : `<div class="grid"><div class="stat ok"><div class="v">${money(p.allowance, p.currency)}</div><div class="l">${t.allow || en.allow}</div></div></div>
+        <p class="small">${t.keep || en.keep}: ${p.keep_paying.map(esc).join(", ")}</p>`}
+      <p>${p.kind === "restriction" ? sgWhy : t.why}</p><p class="small muted">${esc(p.deadline_label)}</p></div>
+      <div class="card"><p><b>${p.kind === "restriction" ? sgAsk : t.ask}</b></p>
+      <input type="file" id="f" multiple accept="image/png,image/jpeg,application/pdf" aria-label="${t.up}">
+      <div class="row" style="margin-top:10px;justify-content:flex-start"><button id="send">${t.up}</button><button class="ghost" id="demo">${t.sample}</button></div>
+      <p id="msg" aria-live="polite">${p.submitted ? t.done : ""}</p></div></div>`;
+    $("#lg").onclick = () => { lang = lang === "English" ? p.language : "English"; draw(); };
+    const go = async useSample => {
+      const fd = new FormData(); const files = $("#f").files;
+      if (!useSample && !files.length) { $("#msg").textContent = t.ask; return; }
+      if (!useSample) [...files].forEach(f => fd.append("files", f));
+      $("#msg").innerHTML = `<span class="spin"></span>`; $("#send").disabled = $("#demo").disabled = true;
+      try { await api(`/api/cases/${cid}/evidence?source=customer`, {method: "POST", body: useSample ? undefined : fd}); $("#msg").textContent = t.done; }
+      catch (e) { $("#msg").innerHTML = `<span class="err">${esc(e.message)}</span>`; }
+      $("#send").disabled = $("#demo").disabled = false;
+    };
+    $("#send").onclick = () => go(false); $("#demo").onclick = () => go(true);
+  };
+  draw();
+}
+
+/* ---------------- officer console ---------------- */
+let current = null, cases = [];
+async function consolePage() {
+  cases = await api("/api/cases");
+  let seen = false; try { seen = localStorage.getItem("ff-guide") === "hidden"; } catch (e) {}
+  const guide = seen ? "" : `<div class="card guide" id="guide"><div class="row"><b>New here? Try it in 2 minutes</b><button class="ghost" id="hideGuide">Hide</button></div>
+    <ol class="small"><li><b>Ravi</b> (India): press 1, then 3 "Use the sample evidence", then 4 "Run the Case Agent" (about 45 seconds), then approve.</li>
+    <li><b>Vikram</b>: already processed. See why his perfect-looking documents are a red flag, and why no letter goes to him.</li>
+    <li><b>Nok</b> (Thai) and <b>Mrs Tan</b> (Singapore, Mandarin): other countries, same engine.</li>
+    <li>Open <b>Regulator view</b> at the top, and the <b>customer link</b> in step 3.</li></ol></div>`;
+  $("#app").innerHTML = `<main><aside class="inbox">${guide}<div class="card"><h3>Freeze cases</h3><div id="list"></div>
+    <p class="small muted">Synthetic demo data. All people, banks and accounts are fictional.</p></div></aside><section id="case"></section></main>`;
+  if ($("#hideGuide")) $("#hideGuide").onclick = () => { $("#guide").remove(); try { localStorage.setItem("ff-guide", "hidden"); } catch (e) {} };
+  drawList(); openCase(current || cases[0].id);
+}
+function drawList() {
+  $("#list").innerHTML = cases.map(c => `<button class="item ${c.id === current ? "on" : ""}" data-id="${c.id}">
+    <div class="row"><b>${esc(c.name)}</b><span class="cc">${c.country}</span></div>
+    <div class="row small"><span class="muted">${c.kind === "inbound" ? money(c.amount, c.currency) + " disputed" : "Restriction order"}</span><span class="pill">${esc(c.status)}</span></div>
+    <div class="clock" data-due="${c.due}"></div></button>`).join("");
+  document.querySelectorAll(".item").forEach(b => b.onclick = () => openCase(b.dataset.id));
+}
+function chart(rows, flaggedId, hold, cur) {
+  const W = 640, H = 170, P = 34, max = Math.max(...rows.map(r => r.balance)) * 1.1;
+  const x = i => P + i * (W - 2 * P) / Math.max(rows.length - 1, 1), y = v => H - 24 - v / max * (H - 44);
+  const pts = rows.map((r, i) => `${x(i)},${y(r.balance)}`).join(" "), fi = rows.findIndex(r => r.id === flaggedId);
+  return `<svg viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="Account balance over time with the disputed credit marked">
+    <line x1="${P}" x2="${W - P}" y1="${y(hold)}" y2="${y(hold)}" stroke="#b42318" stroke-dasharray="5 4"/>
+    <text x="${W - P}" y="${y(hold) - 6}" text-anchor="end" font-size="11" fill="#b42318">hold ${money(hold, cur)}</text>
+    <polyline points="${pts}" fill="none" stroke="#0b5fff" stroke-width="2.5"/>
+    ${rows.map((r, i) => `<circle cx="${x(i)}" cy="${y(r.balance)}" r="${i === fi ? 7 : 3.5}" fill="${i === fi ? "#b42318" : "#0b5fff"}"><title>${esc(r.ts)} ${esc(r.party)} ${r.amount} → ${r.balance}</title></circle>`).join("")}
+    ${fi >= 0 ? `<text x="${x(fi)}" y="${y(rows[fi].balance) - 12}" text-anchor="middle" font-size="11" fill="#b42318">disputed credit</text>` : ""}
+    <text x="${P}" y="${H - 6}" font-size="11" fill="#5b6575">${esc(rows[0].ts.slice(0, 10))}</text><text x="${W - P}" y="${H - 6}" text-anchor="end" font-size="11" fill="#5b6575">${esc(rows.at(-1).ts.slice(0, 10))}</text></svg>`;
+}
+const checkList = cs => `<ul class="checks">${cs.map(c => `<li><span class="i ${c.ok ? "y" : c.over_freeze ? "w" : "x"}" aria-hidden="true">${c.ok ? "✓" : "!"}</span>
+  <div><b>${esc(c.check)}</b><div class="small muted">${esc(c.detail)}</div></div></li>`).join("")}</ul>`;
+async function openCase(id) {
+  current = id; drawList();
+  const c = await api(`/api/cases/${id}`), cur = c.currency, inbound = c.kind === "inbound";
+  const t = c.trace, e = c.essentials;
+  $("#case").innerHTML = `<div class="card"><div class="row"><div><h1>${esc(c.customer.name)}</h1>
+      <div class="muted small">${esc(c.bank)} · ${esc(c.customer.account)} · ${esc(c.customer.segment)}, ${c.customer.age} · ${esc(c.rules.country)} rule pack</div></div>
+      <div style="text-align:right"><div class="clock" data-due="${c.due}" style="font-size:16px"></div><div class="small muted">${esc(c.label)}</div></div></div>
+      ${inbound ? `<div class="grid" style="margin-top:12px"><div class="stat bad"><div class="v">${t.index_whole_account}x</div><div class="l">Proportionality Index if the whole account is frozen</div></div>
+        <div class="stat ok"><div class="v">${t.index_fairfreeze}x</div><div class="l">Proportionality Index with FairFreeze (1.0 = fair)</div></div>
+        <div class="stat"><div class="v">${money(t.disputed, cur)}</div><div class="l">Disputed amount</div></div></div>` : ""}</div>
+
+    <div class="card"><h2><span class="n">1</span>Check the freeze request</h2>
+      <div class="thumbs"><a href="#" id="reqthumb" target="_blank" rel="noopener"></a></div>
+      <div class="row" style="justify-content:flex-start;gap:8px;margin-top:8px"><button id="b1">Read the request with Gemini</button><input type="file" id="f1" accept="image/png,image/jpeg,application/pdf" aria-label="Upload another request"></div>
+      <div id="o1"></div></div>
+
+    <div class="card"><h2><span class="n">2</span>${inbound ? "Trace the money" : "Keep daily living money open"}</h2><div id="o2"></div></div>
+
+    <div class="card"><h2><span class="n">3</span>Customer's side of the story</h2>
+      <div class="row" style="justify-content:flex-start;gap:8px"><a href="/c/${c.id}" target="_blank" rel="noopener"><button class="ghost" tabindex="-1">Open the customer link</button></a>
+      <button id="b3">Use the sample evidence</button></div><div id="o3"></div></div>
+
+    <div class="card"><h2><span class="n">4</span>Case Agent: investigate and draft</h2>
+      <p class="small muted">Gemini 4 Argon plans its own investigation with FairFreeze tools, then drafts the papers. Every number comes from the deterministic engine. A human officer signs.</p>
+      <button id="b4">Run the Case Agent</button><div id="o4"></div></div>
+
+    <div class="card"><h2>Audit trail</h2><div id="audit"></div></div>`;
+  const reqName = c.requisition;
+  $("#reqthumb").href = `/samples/${reqName}`; $("#reqthumb").innerHTML = `<img src="/samples/${reqName}" alt="The freeze request document">`;
+  $("#o2").innerHTML = inbound ? `${chart(t.rows, t.flagged.id, t.hold, cur)}
+    <div class="grid"><div class="stat bad"><div class="v">${money(t.hold, cur)}</div><div class="l">Hold (disputed amount only)</div></div>
+    <div class="stat ok"><div class="v">${money(t.release, cur)}</div><div class="l">Release now</div></div>
+    <div class="stat"><div class="v">${money(t.traceable, cur)}</div><div class="l">Victim's money provably still here (lowest balance rule)</div></div></div>
+    ${t.dissipated > 0 ? `<div class="banner warn"><b>${money(t.dissipated, cur)} already left the account.</b> Next hops for the police: ${t.next_hops.map(h => `${esc(h.party)} ${money(h.amount, cur)} after ${h.minutes_after} min`).join("; ")}.</div>` : ""}`
+    : `<div class="grid"><div class="stat ok"><div class="v">${money(e.allowance, cur)}</div><div class="l">Monthly living money kept open (average essentials x 1.2)</div></div>
+      <div class="stat bad"><div class="v">${money(e.blocked_pending, cur)}</div><div class="l">Transfer to the scammers stopped by the order</div></div>
+      <div class="stat"><div class="v">${money(e.already_sent, cur)}</div><div class="l">Already sent before the order</div></div></div>
+      <table style="margin-top:10px"><tr><th>Month</th><th>Essential spending</th></tr>${Object.entries(e.monthly).map(([m, v]) => `<tr><td>${m}</td><td>${money(v, cur)}</td></tr>`).join("")}</table>
+      <p class="small"><b>Keep paying:</b> ${e.keep_paying.map(esc).join(", ")}<br><b>Blocked payees:</b> ${e.blocked_payees.map(esc).join(", ")}</p>`;
+  if (c.request) showRequest(c.request); if (c.evidence) showEvidence(c.evidence, c); if (c.drafts) showDrafts(c.drafts, c);
+  showAudit(c.audit);
+  $("#b1").onclick = () => step("#b1", "#o1", async () => {
+    const fd = new FormData(); const f = $("#f1").files[0]; if (f) fd.append("file", f);
+    showRequest(await api(`/api/cases/${id}/request`, {method: "POST", body: f ? fd : undefined}));
+  }, "Gemini is reading the document");
+  $("#b3").onclick = () => step("#b3", "#o3", async () => showEvidence(await api(`/api/cases/${id}/evidence`, {method: "POST"}), c), "Gemini is reading the customer's documents");
+  $("#b4").onclick = async () => {
+    $("#b4").disabled = true;
+    try { await api(`/api/cases/${id}/draft`, {method: "POST"}); watchAgent(id); } catch (e) { $("#o4").innerHTML = `<p class="err">${esc(e.message)}</p>`; $("#b4").disabled = false; }
+  };
+  if (c.running) watchAgent(id);
+}
+async function watchAgent(id) {
+  $("#b4").disabled = true;
+  while (current === id) {
+    const c = await api(`/api/cases/${id}`);
+    if (!c.running) {
+      $("#b4").disabled = false;
+      if (c.agent_error) $("#o4").innerHTML = `<p class="err">${esc(c.agent_error)}</p>`; else if (c.drafts) showDrafts(c.drafts, c);
+      refresh(); return;
+    }
+    $("#o4").innerHTML = `<p class="muted"><span class="spin"></span>Gemini 4 Argon is investigating. Tools it has chosen so far:</p>
+      <ol class="steps">${c.live_steps.map((s, i) => `<li>${i + 1}. ${esc(s)}()</li>`).join("")}</ol>`;
+    await new Promise(r => setTimeout(r, 1500));
+  }
+}
+async function step(btn, out, fn, wait) {
+  $(btn).disabled = true; $(out).innerHTML = `<p class="muted"><span class="spin"></span>${wait}…</p>`;
+  try { await fn(); refresh(); } catch (e) { $(out).innerHTML = `<p class="err">${esc(e.message)}</p>`; }
+  $(btn).disabled = false;
+}
+async function refresh() { cases = await api("/api/cases"); drawList(); const c = await api(`/api/cases/${current}`); showAudit(c.audit); }
+function showRequest(r) {
+  const x = r.extracted, over = r.checks.find(c => c.over_freeze);
+  $("#o1").innerHTML = `<table><tr><th>Issued by</th><td>${esc(x.authority)} · ${esc(x.officer)}</td></tr><tr><th>Reference</th><td>${esc(x.reference_no)} ${x.complaint_or_case_no ? "· case " + esc(x.complaint_or_case_no) : ""}</td></tr>
+    <tr><th>Legal basis</th><td>${esc(x.legal_basis)}</td></tr><tr><th>Asks for</th><td>${esc(x.action_requested.replaceAll("_", " "))}</td></tr><tr><th>Summary</th><td>${esc(x.english_summary)}</td></tr></table>
+    ${over ? `<div class="banner warn"><b>Over-freeze caught.</b> ${esc(over.detail)}.</div>` : ""}${checkList(r.checks)}
+    ${x.concerns.length ? `<div class="banner info"><b>Gemini noticed:</b> ${x.concerns.map(esc).join("; ")}</div>` : ""}`;
+}
+function showEvidence(v, c) {
+  const cur = c.currency, plan = v.plan;
+  if (v.scam) {
+    $("#o3").innerHTML = `<p><span class="badge victim">${LABEL.victim}</span> <b>${esc(v.scam.scam_type)}</b></p><p>${esc(v.scam.english_summary)}</p>
+      <ul class="checks">${v.scam.red_flags.map(f => `<li><span class="i x" aria-hidden="true">!</span><div><b>${esc(f.flag)}</b><div>“${esc(f.quote_original)}”</div><div class="small muted">${esc(f.explanation)}</div></div></li>`).join("")}</ul>
+      <div class="banner info"><b>Plan:</b> ${ACTION[plan.action]}. ${esc(plan.why)}</div>`;
+    return;
+  }
+  const hits = v.reuse || [], banks = new Set(hits.map(h => h.bank));
+  $("#o3").innerHTML = `<p><span class="badge ${v.strength}">${LABEL[v.strength]}</span> <span class="small muted">sent by ${esc(v.source)}</span></p>
+    ${hits.length ? `<div class="banner bad"><b>Same story seen ${hits.length} times at ${banks.size} banks.</b> This chat script matches earlier cases (${hits.slice(0, 4).map(h => esc(h.case)).join(", ")}…)${hits.some(h => h.same_image) ? ", some with the identical screenshot file" : ""}. Documents alone cannot clear this account.</div>` : ""}
+    <p>${esc(v.pack.english_summary)}</p>
+    ${v.pack.items.map(i => `<div class="small"><b>${esc(i.kind.replaceAll("_", " "))}</b> · ${esc(i.platform)} · ${esc(i.item_description)}
+      ${i.key_quotes.map(q => `<div>“${esc(q.original)}” <span class="muted">(${esc(q.english)})</span></div>`).join("")}</div>`).join("<hr style='border:0;border-top:1px solid var(--line)'>")}
+    <h4 style="margin:12px 0 0">Documents vs the bank's own record</h4>${checkList(v.checks)}
+    <h4 style="margin:12px 0 0">Account behaviour</h4><ul class="checks">${v.signals.map(s => `<li><span class="i ${s.points === "innocent" ? "y" : s.points === "concern" ? "x" : "w"}" aria-hidden="true">${s.points === "innocent" ? "✓" : s.points === "concern" ? "!" : "·"}</span><div><b>${esc(s.name)}</b><div class="small muted">${esc(s.value)}</div></div></li>`).join("")}</ul>
+    <div class="banner ${v.strength === "red_flag" ? "bad" : "ok"}"><b>Plan:</b> ${ACTION[plan.action]}. Hold ${money(plan.hold, cur)}, release ${money(plan.release, cur)}. ${esc(plan.why)}</div>`;
+}
+function showDrafts(d, c) {
+  const a = d.agent, local = c.country === "TH";
+  $("#o4").innerHTML = `<p class="small muted">Model: ${esc(a.model)} · ${a.steps.length} tool calls, chosen by the agent:</p>
+    <ol class="steps">${a.steps.map((s, i) => `<li style="animation-delay:${i * .12}s">${i + 1}. ${esc(s.tool)}(${Object.keys(s.args).length ? esc(JSON.stringify(s.args).slice(0, 40)) : ""})</li>`).join("")}</ol>
+    <div class="md doc">${md(a.assessment)}</div>
+    <h4>Memo to ${esc(c.rules.release_authority)}</h4><div class="tabs" id="tm"><button data-k="authority_memo">${local ? "Thai" : "As sent"}</button>${local ? `<button class="ghost" data-k="authority_memo_english">English</button>` : ""}</div><div class="doc" id="memo"></div>
+    <h4>Letter to the customer</h4>${d.customer_letter ? `<div class="tabs" id="tl"><button data-k="customer_letter">${esc(c.language)}</button><button class="ghost" data-k="customer_letter_english">English</button></div><div class="doc" id="letter"></div>`
+      : `<div class="banner bad"><b>No customer notice.</b> Strong mule indicators: telling the holder could tip off a launderer, which is an offence. Internal memo only.</div>`}
+    <p class="small muted">Rules cited: ${d.citations_used.map(esc).join(", ")}</p>
+    <div class="row" style="justify-content:flex-start;gap:8px"><input type="text" id="officer" value="Duty officer" aria-label="Officer name"><button id="approve">${c.decision ? "Approved" : "Approve and sign"}</button></div><div id="dec"></div>`;
+  const tabs = (sel, box) => { const set = k => { $(box).textContent = d[k]; document.querySelectorAll(`${sel} button`).forEach(b => b.className = b.dataset.k === k ? "" : "ghost"); };
+    document.querySelectorAll(`${sel} button`).forEach(b => b.onclick = () => set(b.dataset.k)); set($(`${sel} button`).dataset.k); };
+  tabs("#tm", "#memo"); if (d.customer_letter) tabs("#tl", "#letter");
+  if (c.decision) $("#approve").disabled = true;
+  $("#approve").onclick = async () => {
+    try { const r = await api(`/api/cases/${c.id}/approve`, {method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify({officer: $("#officer").value})});
+      $("#dec").innerHTML = `<div class="banner ok">Signed by ${esc(r.officer)} at ${esc(r.at)}. Lien instruction sent to core banking (demo), memo queued to ${esc(c.rules.release_authority)}.</div>`;
+      $("#approve").disabled = true; $("#approve").textContent = "Approved"; refresh(); } catch (e) { $("#dec").innerHTML = `<p class="err">${esc(e.message)}</p>`; }
+  };
+}
+function showAudit(rows) {
+  $("#audit").innerHTML = rows.length ? `<table><tr><th>When</th><th>Who</th><th>What</th></tr>${rows.map(r => `<tr><td class="small">${esc(r.at.replace("T", " "))}</td><td>${esc(r.who)}</td><td>${esc(r.what)}</td></tr>`).join("")}</table>` : `<p class="muted small">Nothing yet.</p>`;
+}
+
+/* ---------------- regulator view ---------------- */
+async function regulatorPage() {
+  const rows = await api("/api/regulator");
+  const req = rows.reduce((s, r) => s + r.index_requested, 0) / rows.length, ff = rows.reduce((s, r) => s + r.index_fairfreeze, 0) / rows.length;
+  $("#app").innerHTML = `<main style="grid-template-columns:1fr"><section><div class="card"><h1>Regulator view: proportionality across banks</h1>
+    <p class="muted">The Proportionality Index is money held divided by money provably disputed. 1.0 is fair. Regulators can rank banks by it and see innocent customers freed faster.</p>
+    <div class="grid"><div class="stat bad"><div class="v">${req.toFixed(1)}x</div><div class="l">Average index if whole accounts are frozen</div></div>
+    <div class="stat ok"><div class="v">${ff.toFixed(2)}x</div><div class="l">Average index with FairFreeze</div></div>
+    <div class="stat"><div class="v">${rows.length}</div><div class="l">Inbound freeze cases in this demo</div></div></div></div>
+    <div class="card"><table><tr><th>Case</th><th>Country</th><th>Bank</th><th>Disputed</th><th>Whole-account hold</th><th>FairFreeze hold</th><th>Index before → after</th><th>Status</th></tr>
+    ${rows.map(r => `<tr><td>${esc(r.id)}</td><td>${r.country}</td><td>${esc(r.bank)}</td><td>${r.disputed.toLocaleString()}</td><td>${r.requested_hold.toLocaleString()}</td><td>${r.fairfreeze_hold.toLocaleString()}</td>
+      <td><b>${r.index_requested}x → ${r.index_fairfreeze}x</b></td><td><span class="pill">${esc(r.status)}</span></td></tr>`).join("")}</table>
+    <p class="small muted">An index above 1.0 after FairFreeze means the officer kept a wider hold on purpose, for example a likely mule account, and the reason is in the audit trail.</p></div></section></main>`;
+}
+
+document.querySelectorAll("#nav button").forEach(b => b.onclick = async () => {
+  if (b.dataset.v === "reset") { if (!confirm("Put all demo cases back to New?")) return; await api("/api/reset", {method: "POST"}); current = null; b.blur(); return consolePage(); }
+  document.querySelectorAll("#nav button").forEach(x => x.classList.toggle("on", x === b));
+  (b.dataset.v === "console" ? consolePage : regulatorPage)().catch(e => $("#app").innerHTML = `<p class="err" style="padding:20px">${esc(e.message)}</p>`);
+});
+const m = location.pathname.match(/^\/c\/([\w-]+)/);
+(m ? customerPage(m[1]) : consolePage()).catch(e => $("#app").innerHTML = `<p class="err" style="padding:20px">${esc(e.message)}</p>`);
+</script>
+</body>
+</html>

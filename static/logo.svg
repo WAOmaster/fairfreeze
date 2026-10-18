@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="FairFreeze">
+  <title>FairFreeze</title>
+  <!-- A ring that is mostly free (green) with one frozen slice (ice): hold only the disputed part. -->
+  <g fill="none" stroke-width="9">
+    <path d="M21 12.95 A22 22 0 0 1 43 12.95" stroke="#7FB0FF"/>
+    <path d="M45.545 14.663 A22 22 0 1 1 18.455 14.663" stroke="#19C37D"/>
+  </g>
+  <g transform="translate(32 33)" stroke="#7FB0FF" stroke-width="2.6" stroke-linecap="round" fill="none">
+    <path d="M0 -9 V9 M-7.8 -4.5 L7.8 4.5 M-7.8 4.5 L7.8 -4.5"/>
+    <path d="M-2.6 -6.6 L0 -9 L2.6 -6.6 M-2.6 6.6 L0 9 L2.6 6.6"/>
+  </g>
+</svg>
