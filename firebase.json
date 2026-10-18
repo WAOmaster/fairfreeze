@@ -1,0 +1,8 @@
+{
+  "hosting": {
+    "site": "fairfreeze",
+    "public": "static",
+    "ignore": ["**/*"],
+    "rewrites": [{"source": "**", "run": {"serviceId": "fairfreeze", "region": "asia-southeast1"}}]
+  }
+}
