@@ -318,10 +318,11 @@ async def run_agent(cid, c, st):
         "what happened, the recommended action and why, anything the automatic checks may have missed, and the rule ids "
         "that apply. You recommend; a human officer decides. Plain English, no em-dashes.")
     for model in REASON:
+        st["live_steps"].clear()  # the page shows the steps of the model that is answering now
         try:
             # cap each model's whole investigation; a busy model must not leave the officer waiting
             r = await asyncio.wait_for(asyncio.to_thread(client.models.generate_content, model=model, config=cfg,
-                                                         contents=f"Investigate case {cid} and assess it."), 75)
+                                                         contents=f"Investigate case {cid} and assess it."), 100)
             steps = [{"tool": p.function_call.name, "args": dict(p.function_call.args or {})}
                      for h in (r.automatic_function_calling_history or []) for p in (h.parts or []) if p.function_call]
             return {"model": model, "steps": steps, "assessment": r.text or ""}
