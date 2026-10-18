@@ -1,0 +1,52 @@
+{
+  "IN": {
+    "country": "India",
+    "currency": "INR",
+    "regulator": "RBI / I4C (Ministry of Home Affairs)",
+    "release_authority": "Investigating officer of the cyber police station, or the jurisdictional Magistrate",
+    "hold_basis": "disputed_amount",
+    "review_deadline_hours": 72,
+    "deadline_label": "FairFreeze internal SLA: send a release memo within 72 hours (the SOP sets no fixed release time)",
+    "allowed_legal_bases": ["106", "bnss", "102", "crpc", "1930", "ncrp", "cfcfrms", "section 94", "magistrate"],
+    "notice_rule": "Tell the customer the case number, the amount on hold, the police station, and that the rest of the account is usable. Do not share investigation details.",
+    "languages": ["Hindi", "English"],
+    "rules": [
+      {"id": "IN-1", "source": "I4C SOP for NCRP and CFCFRMS, 2 Jan 2026", "summary": "Standard procedure for banks acting on cyber fraud requests raised through the national portal; Clause 10 gives account holders a grievance route."},
+      {"id": "IN-2", "source": "Kerala High Court rulings, 2026 (e.g. M.S. Kunnamangalam Co-operative Rural Bank v Inspector of Police)", "summary": "Keep the account running and limit the lien to the amount in the police request, unless the bank itself suspects mule activity; the held amount stays for the Magistrate."},
+      {"id": "IN-3", "source": "Bharatiya Nagarik Suraksha Sanhita (BNSS) Section 106", "summary": "Police power to seize property suspected to be connected with an offence; a freeze must be reported to the Magistrate."}
+    ]
+  },
+  "TH": {
+    "country": "Thailand",
+    "currency": "THB",
+    "regulator": "Bank of Thailand / Anti Online Scam Operation Center (AOC 1441)",
+    "release_authority": "Bank, after AOC 1441 verification of the account holder",
+    "hold_basis": "disputed_amount",
+    "review_deadline_hours": 24,
+    "deadline_label": "Release within 4 hours to 1 working day once innocence is verified",
+    "allowed_legal_bases": ["emergency decree", "technology crime", "aoc", "1441", "พระราชกำหนด", "อาชญากรรมทางเทคโนโลยี", "ศูนย์ปฏิบัติการแจ้งความออนไลน์"],
+    "notice_rule": "Notify by SMS or app: which amount is suspended, that other money is usable, and to call AOC 1441 (press 2) to verify. Do not share investigation details.",
+    "languages": ["Thai", "English"],
+    "rules": [
+      {"id": "TH-1", "source": "Bank of Thailand and Thai Bankers' Association, Sept 2025", "summary": "Suspend only the amount linked to the fraud case, not the whole account; notify the customer by SMS or mobile banking."},
+      {"id": "TH-2", "source": "Bank guidelines on wrongful suspensions, 2025-2026", "summary": "Unfreeze an innocent customer within 4 hours to one working day after verification through AOC 1441."},
+      {"id": "TH-3", "source": "Ministerial regulation under the Technology Crime Emergency Decree, in force 12 Aug 2026", "summary": "Confirmed mule accounts lose mobile banking, ATM and online services across all banks; innocent holders must be separated from mules."}
+    ]
+  },
+  "SG": {
+    "country": "Singapore",
+    "currency": "SGD",
+    "regulator": "Singapore Police Force (Anti-Scam Command) / MAS",
+    "release_authority": "Police officer who issued the restriction order",
+    "hold_basis": "restriction_order",
+    "review_deadline_hours": 720,
+    "deadline_label": "Restriction order lasts up to 30 days; police may renew it up to 5 times",
+    "allowed_legal_bases": ["protection from scams act", "restriction order", "section 3"],
+    "notice_rule": "Explain kindly, in the customer's language, that the order protects them from a scam, that daily living money stays available, and how to ask the bank or police for help. Never blame the customer.",
+    "languages": ["Mandarin", "English"],
+    "rules": [
+      {"id": "SG-1", "source": "Protection from Scams Act 2025", "summary": "Police may order banks to restrict the banking transactions of a person believed to be about to send money to scammers, for up to 30 days, renewable up to 5 times."},
+      {"id": "SG-2", "source": "Protection from Scams Act 2025, legitimate needs", "summary": "The restricted person can still ask the bank for money for legitimate needs such as daily living expenses."}
+    ]
+  }
+}

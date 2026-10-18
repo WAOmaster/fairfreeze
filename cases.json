@@ -1,0 +1,98 @@
+{
+  "_note": "Synthetic demo data. Every person, bank, company and account is fictional.",
+  "IN-2026-0411": {
+    "country": "IN", "kind": "inbound", "language": "Hindi",
+    "bank": "Sahyadri Cooperative Bank (fictional)",
+    "customer": {"name": "Ravi Deshmukh", "age": 29, "city": "Pune", "account": "SCB-0045-118922", "opened": "2019-06-12", "segment": "Salaried"},
+    "received_hours_ago": 30,
+    "flagged": "T5",
+    "opening_balance": 41170,
+    "regular_payees": ["Shree Ganesh Housing", "MSEDCL Electricity", "Kalyani Auto Components"],
+    "txns": [
+      {"id": "T1", "ts": "2026-10-01T09:10", "desc": "Salary credit", "party": "Kalyani Auto Components", "amount": 62000},
+      {"id": "T2", "ts": "2026-10-02T10:30", "desc": "Rent", "party": "Shree Ganesh Housing", "amount": -15000},
+      {"id": "T3", "ts": "2026-10-05T19:12", "desc": "Groceries (UPI)", "party": "D-Mart Kothrud", "amount": -2450},
+      {"id": "T4", "ts": "2026-10-08T08:05", "desc": "Electricity bill", "party": "MSEDCL Electricity", "amount": -1380},
+      {"id": "T5", "ts": "2026-10-11T18:42", "desc": "UPI credit ref 628104773215", "party": "AMIT K SHARMA", "amount": 3600},
+      {"id": "T6", "ts": "2026-10-12T20:15", "desc": "Fuel", "party": "HP Petrol Pump Baner", "amount": -1100},
+      {"id": "T7", "ts": "2026-10-14T11:40", "desc": "Pharmacy", "party": "Apollo Pharmacy Aundh", "amount": -2840}
+    ],
+    "requisition": "IN_ravi_notice.png",
+    "evidence": ["IN_ravi_chat.png", "IN_ravi_courier.png"]
+  },
+  "TH-2026-1520": {
+    "country": "TH", "kind": "inbound", "language": "Thai",
+    "bank": "Lanna Commerce Bank (fictional)",
+    "customer": {"name": "Nok Srisuwan", "age": 34, "city": "Chiang Mai", "account": "LCB-221-5-80734", "opened": "2021-03-02", "segment": "Online shop owner"},
+    "received_hours_ago": 5,
+    "flagged": "T3",
+    "opening_balance": 2150,
+    "regular_payees": ["Doi Saket Fabric Supply"],
+    "txns": [
+      {"id": "T1", "ts": "2026-10-13T10:02", "desc": "PromptPay sale", "party": "PIMCHANOK R.", "amount": 690},
+      {"id": "T2", "ts": "2026-10-14T16:45", "desc": "PromptPay sale", "party": "KANYA T.", "amount": 950},
+      {"id": "T3", "ts": "2026-10-15T14:20", "desc": "PromptPay credit", "party": "NATTAPONG S.", "amount": 1250},
+      {"id": "T4", "ts": "2026-10-15T14:47", "desc": "Supplier payment", "party": "Doi Saket Fabric Supply", "amount": -3000},
+      {"id": "T5", "ts": "2026-10-16T09:30", "desc": "PromptPay sale", "party": "WARUNEE P.", "amount": 890},
+      {"id": "T6", "ts": "2026-10-17T13:05", "desc": "PromptPay sale", "party": "SUDA K.", "amount": 1500},
+      {"id": "T7", "ts": "2026-10-17T20:10", "desc": "PromptPay sale", "party": "ORNANONG M.", "amount": 2300}
+    ],
+    "requisition": "TH_nok_notice.png",
+    "evidence": ["TH_nok_chat.png"]
+  },
+  "IN-2026-0419": {
+    "country": "IN", "kind": "inbound", "language": "Hindi",
+    "bank": "Sahyadri Cooperative Bank (fictional)",
+    "customer": {"name": "Vikram Rathod", "age": 23, "city": "Pune", "account": "SCB-0045-771034", "opened": "2026-09-28", "segment": "New account"},
+    "received_hours_ago": 12,
+    "flagged": "T4",
+    "opening_balance": 500,
+    "regular_payees": [],
+    "txns": [
+      {"id": "T1", "ts": "2026-10-13T11:02", "desc": "UPI credit", "party": "SUNITA BHAGAT", "amount": 18000},
+      {"id": "T2", "ts": "2026-10-13T11:19", "desc": "UPI transfer", "party": "RK TRADERS 77", "amount": -17800},
+      {"id": "T3", "ts": "2026-10-13T15:40", "desc": "UPI credit", "party": "P VENKATESH", "amount": 9500},
+      {"id": "T4", "ts": "2026-10-13T16:05", "desc": "UPI credit ref 628144190288", "party": "MEERA JOSHI", "amount": 24500},
+      {"id": "T5", "ts": "2026-10-13T16:21", "desc": "UPI transfer", "party": "GLOBALPAY WALLET 9", "amount": -33600},
+      {"id": "T6", "ts": "2026-10-13T22:48", "desc": "UPI credit", "party": "ANIL DSOUZA", "amount": 12000},
+      {"id": "T7", "ts": "2026-10-13T23:02", "desc": "UPI transfer", "party": "RK TRADERS 77", "amount": -11200}
+    ],
+    "requisition": "IN_x_notice.png",
+    "evidence": ["IN_x_chat.png"]
+  },
+  "SG-2026-0077": {
+    "country": "SG", "kind": "restriction", "language": "Mandarin",
+    "bank": "Merlion Savings Bank (fictional)",
+    "customer": {"name": "Tan Mei Ling", "age": 72, "city": "Singapore", "account": "MSB-301-448812-9", "opened": "1988-04-20", "segment": "Retiree"},
+    "received_hours_ago": 50,
+    "opening_balance": 186400,
+    "regular_payees": ["SP Group Utilities", "Great Eastern Shield (fictional)", "NTUC FairPrice", "Polyclinic Bedok"],
+    "essential_categories": ["groceries", "utilities", "medical", "insurance", "transport"],
+    "txns": [
+      {"id": "T1", "ts": "2026-07-01T08:00", "desc": "CPF LIFE payout", "party": "CPF Board", "amount": 1650, "cat": "income"},
+      {"id": "T2", "ts": "2026-07-04T10:20", "desc": "Groceries", "party": "NTUC FairPrice", "amount": -420, "cat": "groceries"},
+      {"id": "T3", "ts": "2026-07-10T09:00", "desc": "Utilities GIRO", "party": "SP Group Utilities", "amount": -138, "cat": "utilities"},
+      {"id": "T4", "ts": "2026-07-15T11:00", "desc": "Medical", "party": "Polyclinic Bedok", "amount": -65, "cat": "medical"},
+      {"id": "T5", "ts": "2026-07-20T09:00", "desc": "Insurance GIRO", "party": "Great Eastern Shield (fictional)", "amount": -210, "cat": "insurance"},
+      {"id": "T6", "ts": "2026-07-25T18:00", "desc": "EZ-Link top-up", "party": "TransitLink", "amount": -50, "cat": "transport"},
+      {"id": "T7", "ts": "2026-08-01T08:00", "desc": "CPF LIFE payout", "party": "CPF Board", "amount": 1650, "cat": "income"},
+      {"id": "T8", "ts": "2026-08-05T10:05", "desc": "Groceries", "party": "NTUC FairPrice", "amount": -455, "cat": "groceries"},
+      {"id": "T9", "ts": "2026-08-10T09:00", "desc": "Utilities GIRO", "party": "SP Group Utilities", "amount": -142, "cat": "utilities"},
+      {"id": "T10", "ts": "2026-08-20T09:00", "desc": "Insurance GIRO", "party": "Great Eastern Shield (fictional)", "amount": -210, "cat": "insurance"},
+      {"id": "T11", "ts": "2026-08-26T18:00", "desc": "EZ-Link top-up", "party": "TransitLink", "amount": -50, "cat": "transport"},
+      {"id": "T12", "ts": "2026-09-01T08:00", "desc": "CPF LIFE payout", "party": "CPF Board", "amount": 1650, "cat": "income"},
+      {"id": "T13", "ts": "2026-09-03T10:30", "desc": "Groceries", "party": "NTUC FairPrice", "amount": -398, "cat": "groceries"},
+      {"id": "T14", "ts": "2026-09-10T09:00", "desc": "Utilities GIRO", "party": "SP Group Utilities", "amount": -151, "cat": "utilities"},
+      {"id": "T15", "ts": "2026-09-18T14:00", "desc": "Medical", "party": "Polyclinic Bedok", "amount": -82, "cat": "medical"},
+      {"id": "T16", "ts": "2026-09-20T09:00", "desc": "Insurance GIRO", "party": "Great Eastern Shield (fictional)", "amount": -210, "cat": "insurance"},
+      {"id": "T17", "ts": "2026-09-24T18:00", "desc": "EZ-Link top-up", "party": "TransitLink", "amount": -50, "cat": "transport"},
+      {"id": "T18", "ts": "2026-10-02T15:10", "desc": "FAST transfer (new payee)", "party": "Golden Harvest Capital Ltd", "amount": -20000, "cat": "transfer"},
+      {"id": "T19", "ts": "2026-10-09T15:30", "desc": "FAST transfer (new payee)", "party": "Golden Harvest Capital Ltd", "amount": -15000, "cat": "transfer"}
+    ],
+    "pending": [
+      {"ts": "2026-10-16T14:55", "desc": "Telegraphic transfer to Hong Kong (blocked by order)", "party": "GH Asset Mgmt HK", "amount": -60000}
+    ],
+    "requisition": "SG_tan_order.png",
+    "evidence": ["SG_tan_chat.png"]
+  }
+}
