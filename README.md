@@ -23,7 +23,7 @@ Regulators across Asia Pacific are right to push banks to freeze scam money quic
 FairFreeze is the desk a bank officer uses after a freeze.
 
 1. **Check the request.** Gemini reads the police or court notice, in English, Hindi or Thai. FairFreeze checks it against the bank's own records and flags requests that go wider than the law allows.
-2. **Follow the money.** It works out how much of the scam money is really still in the account, holds that, and releases the rest. It also shows where the rest went, for the police.
+2. **Follow the money.** It works out how much of the scam money is really still in the account, holds that, and releases the rest. A money map shows where the money came from and went, city by city, and where the account is used from.
 3. **Hear the customer.** The customer gets a link in their own language, sees what is held and what is free, and uploads their side of the story.
 4. **Check the evidence.** Documents are compared with the bank's records, and with past cases at other banks, so a mule can't reuse the same fake chat.
 5. **Investigate and draft.** A Case Agent on Gemini 4 Argon decides which checks to run, writes up the case, and drafts the memo for the police and the letter for the customer. No letter goes to a likely mule; tipping one off is against the law.
@@ -39,7 +39,7 @@ All data is synthetic. Every person, bank and account is made up.
 |---|---|
 | **Ravi** (India) | Sold a phone for INR 3,600; police asked for his whole INR 84,000 account. FairFreeze holds 3,600, releases 80,400 and writes to him in Hindi. |
 | **Nok** (Thailand) | Online shop owner, one THB 1,250 payment disputed. Thai notice, Thai rules, Thai letter. |
-| **Vikram** (India) | Perfect-looking documents, but the same chat appears in 14 cases at 3 banks and his money left within 16 minutes. The hold stays; no letter. |
+| **Vikram** (India) | Perfect-looking documents, but the same chat appears in 14 cases at 3 banks, his money left for Dubai and Hong Kong within minutes, and 92% of his logins come from Cambodia. The hold stays; no letter. |
 | **Mrs Tan** (Singapore) | 72 and under a restriction order while a fake mentor asks for SGD 60,000. Her daily money stays open and the scam is explained in Mandarin. |
 
 ## How it's built
