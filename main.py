@@ -142,11 +142,11 @@ READ_RULES = ("Copy names, numbers and references exactly as printed. Do not cal
 
 async def ask(parts, schema, system, models=READ):
     # a slow model must not hang the case: give up after 90 s and try the next one
-    cfg = types.GenerateContentConfig(system_instruction=system, temperature=0, http_options=types.HttpOptions(timeout=90_000),
+    cfg = types.GenerateContentConfig(system_instruction=system, temperature=0, http_options=types.HttpOptions(timeout=110_000),
                                       response_mime_type="application/json", response_schema=schema)
     for model in models:
         try:
-            r = await asyncio.wait_for(client.aio.models.generate_content(model=model, contents=parts, config=cfg), 60)
+            r = await asyncio.wait_for(client.aio.models.generate_content(model=model, contents=parts, config=cfg), 100 if models is REASON else 45)
             if r.parsed is not None:
                 return r.parsed
             print(f"gemini {model}: no structured result", flush=True)
